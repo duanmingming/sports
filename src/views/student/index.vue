@@ -4,13 +4,13 @@
       <div slot="header" class="clearfix">
         <span>商品筛选</span>
       </div>
-     
+
       <el-form :inline="true" :model="goodsQuery">
         <el-form-item label="上架状态">
           <el-select v-model="goodsQuery.status" placeholder="">
-            <el-option label="未上架" value="shanghai"></el-option>
-            <el-option label="审核中" value="beijing"></el-option>
-            <el-option label="已上架" value="shanghai1"></el-option>
+            <el-option label="未上架" value="shanghai" />
+            <el-option label="审核中" value="beijing" />
+            <el-option label="已上架" value="shanghai1" />
           </el-select>
         </el-form-item>
         <el-form-item label="上传时间">
@@ -19,11 +19,11 @@
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+            end-placeholder="结束日期"
+          />
         </el-form-item>
         <el-form-item label="">
-          <el-input v-model="goodsQuery.others" placeholder="请输入商品名称或其他关键词"></el-input>
+          <el-input v-model="goodsQuery.others" placeholder="请输入商品名称或其他关键词" />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -35,8 +35,8 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>普通商品列表</span>
-        <el-button style="float: right;" type="primary" >批量删除</el-button>
-        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd" >添加商品</el-button>
+        <el-button style="float: right;" type="primary">批量删除</el-button>
+        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>
       <Table :options="options" />
     </el-card>
@@ -51,13 +51,13 @@
 
       <el-form ref="createForm" :model="createForm" :rules="rules" label-width="100px">
         <el-form-item label="商品名称：" prop="name">
-          <el-input v-model="createForm.name" placeholder="请输入名称"/>
+          <el-input v-model="createForm.name" placeholder="请输入名称" />
         </el-form-item>
         <el-form-item label="颜色：" prop="color">
-          <el-input v-model="createForm.color" placeholder="请输入商品颜色"/>
+          <el-input v-model="createForm.color" placeholder="请输入商品颜色" />
         </el-form-item>
         <el-form-item label="尺码：" prop="size">
-          <el-input v-model="createForm.size" placeholder="请输入商品尺码"/>
+          <el-input v-model="createForm.size" placeholder="请输入商品尺码" />
         </el-form-item>
         <el-form-item label="商品图片：" prop="img">
           <el-upload
@@ -65,38 +65,38 @@
             action="#"
             :show-file-list="false"
             :on-change="beforeAvatarUpload"
-            :auto-upload="false">
+            :auto-upload="false"
+          >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
         <el-form-item label="重量：" prop="weight">
-          <el-input v-model="createForm.weight" placeholder="请输入商品重量"/>
+          <el-input v-model="createForm.weight" placeholder="请输入商品重量" />
         </el-form-item>
         <el-form-item label="商品单价：" prop="unitPrice">
-          <el-input v-model="createForm.unitPrice" placeholder="请输入商品单价"/>
+          <el-input v-model="createForm.unitPrice" placeholder="请输入商品单价" />
         </el-form-item>
         <el-form-item label="优惠价格：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格"/>
+          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
         </el-form-item>
         <el-form-item label="商品简介：" prop="introduction">
-          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="请输入商品简介"/>
+          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="请输入商品简介" />
         </el-form-item>
-      
 
         <el-form-item label="制造商：" prop="maker">
-          <el-input v-model="createForm.maker" placeholder="请输入商品制造商"/>
+          <el-input v-model="createForm.maker" placeholder="请输入商品制造商" />
         </el-form-item>
 
         <el-form-item label="校区状态：" prop="status">
           <el-switch
-            style="display: block;marginTop: 6px;"
             v-model="createForm.status"
+            style="display: block;marginTop: 6px;"
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-text="上架"
-            inactive-text="下架">
-          </el-switch>
+            inactive-text="下架"
+          />
         </el-form-item>
       </el-form>
 
@@ -114,9 +114,8 @@ import { getCampusList } from '@/api/campus'
 
 export default {
   name: 'General',
-  components: {Table},
+  components: { Table },
   data() {
-
     const checkEmail = (rule, value, callback) => {
       if (value) {
         const reg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
@@ -144,7 +143,6 @@ export default {
         return callback()
       }
     }
-
 
     return {
       options: {
@@ -178,11 +176,11 @@ export default {
             name: '尺码',
             value: 'status',
             width: '10%'
-          },{
+          }, {
             name: '上传人',
             value: 'time',
             width: '10%'
-          },{
+          }, {
             name: '上传时间',
             value: 'time',
             width: '10%'
@@ -231,11 +229,11 @@ export default {
           { required: true, message: '请输入名称', trigger: 'blur' }
         ],
         unitPrice: [
-          { required: true, message: '请输入单价', trigger: 'blur' },
+          { required: true, message: '请输入单价', trigger: 'blur' }
         ],
         introduction: [
-          { required: true, message: '请输入商品简介', trigger: 'blur' },
-        ],
+          { required: true, message: '请输入商品简介', trigger: 'blur' }
+        ]
       },
 
       editFlag: false,
@@ -243,123 +241,123 @@ export default {
       imageUrl: '',
 
       goodsTree: [
-		{
-			label: "上海校区",
-			value: 10000,
-			children:[
-				{
-					label: "静安校区",
-					value: 10001,
-					children: [
-						{
-							label: "静安训练中心",
-							value: 10002
-						}
-					]
-				},
-				{
-					label: "闵行校区",
-					value: 10003,
-					children: [{
-						label: "闵行训练中心",
-						value: 10004
-					}]
-				}
-			]
-		},
-		{
-			label: "北京校区",
-			value: 10005,
-			children: [{
-					label: "北京嘉里中心",
-					value: 10006
-				}
-			]
-		},
-		{
-			label: "贵州省校区",
-			value: 10007,
-			children: [{
-				label: "贵阳市校区",
-				value: 10008,
-				children: [
-					{
-						label: "贵州训练中心",
-						value: 10009
-					}
-				]
-			}]
-		},
-		{
-			label: "香港校区",
-			value: 10010,
-			children: [{
-				label: "香港训练中心",
-				value: 10011
-			}]
-		},
-		{
-			label: "测试校区（省)",
-			value: 90000,
-			children: [
-				{
-					label: "测试省属培训中心1",
-					value: 90001
-				},
-				{
-					label: "测试校区（市）",
-					value: 90002,
-					children: [
-						{
-							label: "测试市属培训中心1",
-							value: 90003
-						},
-						{
-							label: "测试校区1（县)",
-							value: 90004,
-							children: [
-								{
-									label: "测试培训中心11",
-									value: 90005
-								},
-								{
-									label: "测试培训中心12",
-									value: 90006
-								}
-							]
-						},
-						{
-							label: "测试校区2（县)",
-							value: 90007,
-							children: [{
-									label: "测试培训中心21",
-									value: 90008
-								},
-								{
-									label: "测试培训中心22",
-									value: 90009
-								}
-							]
-						}
-					]
-				},
-			]
-		},
-		{
-			label: "测试总部直营校区",
-			value: 90010,
-			children: [
-				{
-					label: "测试直营校区1",
-					value: 90011
-				},
-				{
-					label: "测试直营校区2",
-					value: 90012,
-				}
-			]
-		},
-	],
+        {
+          label: '上海校区',
+          value: 10000,
+          children: [
+            {
+              label: '静安校区',
+              value: 10001,
+              children: [
+                {
+                  label: '静安训练中心',
+                  value: 10002
+                }
+              ]
+            },
+            {
+              label: '闵行校区',
+              value: 10003,
+              children: [{
+                label: '闵行训练中心',
+                value: 10004
+              }]
+            }
+          ]
+        },
+        {
+          label: '北京校区',
+          value: 10005,
+          children: [{
+            label: '北京嘉里中心',
+            value: 10006
+          }
+          ]
+        },
+        {
+          label: '贵州省校区',
+          value: 10007,
+          children: [{
+            label: '贵阳市校区',
+            value: 10008,
+            children: [
+              {
+                label: '贵州训练中心',
+                value: 10009
+              }
+            ]
+          }]
+        },
+        {
+          label: '香港校区',
+          value: 10010,
+          children: [{
+            label: '香港训练中心',
+            value: 10011
+          }]
+        },
+        {
+          label: '测试校区（省)',
+          value: 90000,
+          children: [
+            {
+              label: '测试省属培训中心1',
+              value: 90001
+            },
+            {
+              label: '测试校区（市）',
+              value: 90002,
+              children: [
+                {
+                  label: '测试市属培训中心1',
+                  value: 90003
+                },
+                {
+                  label: '测试校区1（县)',
+                  value: 90004,
+                  children: [
+                    {
+                      label: '测试培训中心11',
+                      value: 90005
+                    },
+                    {
+                      label: '测试培训中心12',
+                      value: 90006
+                    }
+                  ]
+                },
+                {
+                  label: '测试校区2（县)',
+                  value: 90007,
+                  children: [{
+                    label: '测试培训中心21',
+                    value: 90008
+                  },
+                  {
+                    label: '测试培训中心22',
+                    value: 90009
+                  }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '测试总部直营校区',
+          value: 90010,
+          children: [
+            {
+              label: '测试直营校区1',
+              value: 90011
+            },
+            {
+              label: '测试直营校区2',
+              value: 90012
+            }
+          ]
+        }
+      ],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -367,33 +365,32 @@ export default {
     }
   },
 
-  mounted(){
+  mounted() {
     this.getListData()
   },
 
   methods: {
     onSubmit() {
-      console.log('submit!');
+      console.log('submit!')
     },
 
     getListData() {
-
-      let params = {
+      const params = {
         cid: 1
       }
 
       getCampusList(params).then(res => {
-        console.log('===========resresres=========================');
-        console.log(res);
-        console.log('====================================');
+        console.log('===========resresres=========================')
+        console.log(res)
+        console.log('====================================')
       })
-      let arr = this.options.columnDataInfo
-      let result = []
+      const arr = this.options.columnDataInfo
+      const result = []
 
-      for(let i=0; i<10; i++){
-        let obj = {}
-        for(let item of arr){
-          obj[item.value] = Math.random()*10
+      for (let i = 0; i < 10; i++) {
+        const obj = {}
+        for (const item of arr) {
+          obj[item.value] = Math.random() * 10
         }
         result.push(obj)
       }
@@ -430,19 +427,19 @@ export default {
     },
 
     beforeAvatarUpload(file) {
-      console.log('==========filefilefilefile==========================');
-      console.log(file);
-      console.log('====================================');
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log('==========filefilefilefile==========================')
+      console.log(file)
+      console.log('====================================')
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      this.imageUrl = URL.createObjectURL(file.raw)
       // if (!isJPG) {
       //   this.$message.error('上传头像图片只能是 JPG 格式!');
       // }
       // if (!isLt2M) {
       //   this.$message.error('上传头像图片大小不能超过 2MB!');
       // }
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
 }

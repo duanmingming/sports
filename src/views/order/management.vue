@@ -12,15 +12,15 @@
       <div slot="header" class="clearfix">
         <span>订单筛选</span>
       </div>
-     
+
       <el-form :inline="true" :model="formInline">
         <el-form-item label="订单状态">
           <el-select v-model="formInline.region" placeholder="订单状态">
-            <el-option label="未付款" value="shanghai"></el-option>
-            <el-option label="已付款" value="beijing"></el-option>
-            <el-option label="已排课" value="shanghai1"></el-option>
-            <el-option label="已结课" value="shanghai2"></el-option>
-            <el-option label="已转课" value="shanghai3"></el-option>
+            <el-option label="未付款" value="shanghai" />
+            <el-option label="已付款" value="beijing" />
+            <el-option label="已排课" value="shanghai1" />
+            <el-option label="已结课" value="shanghai2" />
+            <el-option label="已转课" value="shanghai3" />
           </el-select>
         </el-form-item>
         <el-form-item label="提交时间">
@@ -29,8 +29,8 @@
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+            end-placeholder="结束日期"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -53,7 +53,7 @@ import Table from '@/components/Table/index'
 
 export default {
   name: 'Management',
-  components: {Table},
+  components: { Table },
   data() {
     return {
       options: {
@@ -87,7 +87,7 @@ export default {
             name: '订单状态',
             value: 'status',
             width: '10%'
-          },{
+          }, {
             name: '提交时间',
             value: 'time',
             width: '10%'
@@ -115,23 +115,23 @@ export default {
     }
   },
 
-  mounted(){
+  mounted() {
     this.getListData()
   },
 
   methods: {
     onSubmit() {
-      console.log('submit!');
+      console.log('submit!')
     },
 
     getListData() {
-      let arr = this.options.columnDataInfo
-      let result = []
+      const arr = this.options.columnDataInfo
+      const result = []
 
-      for(let i=0; i<10; i++){
-        let obj = {}
-        for(let item of arr){
-          obj[item.value] = Math.random()*10
+      for (let i = 0; i < 10; i++) {
+        const obj = {}
+        for (const item of arr) {
+          obj[item.value] = Math.random() * 10
         }
         result.push(obj)
       }

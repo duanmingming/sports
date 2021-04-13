@@ -24,8 +24,6 @@ import curriculumRouter from './modules/curriculum'
 import crmRouter from './modules/crm'
 import systemRouter from './modules/system'
 
-
-
 /**
  * Note: sub-menu only appear when route children.length >= 1
  * Detail see: https://panjiachen.github.io/vue-element-admin-site/guide/essentials/router-and-nav.html

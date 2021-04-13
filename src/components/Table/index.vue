@@ -131,7 +131,7 @@ export default {
         this.pageSize = val
       }
     },
-    
+
     handleCurrentChange(val) {
       this.$emit('handleTable', {
         type: 'pageNumChange',

@@ -4,7 +4,7 @@
       <div slot="header" class="clearfix">
         <span>校区筛选</span>
       </div>
-     
+
       <el-form :inline="true" :model="formInline">
         <el-form-item label="校区地址">
           <!-- <el-select v-model="formInline.region" placeholder="校区地址">
@@ -17,8 +17,7 @@
           <el-cascader
             v-model="value"
             :options="goodsTree"
-          >
-          </el-cascader>
+          />
         </el-form-item>
         <el-form-item label="建立时间">
           <el-date-picker
@@ -26,8 +25,8 @@
             type="daterange"
             range-separator="至"
             start-placeholder="开始日期"
-            end-placeholder="结束日期">
-          </el-date-picker>
+            end-placeholder="结束日期"
+          />
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="onSubmit">查询</el-button>
@@ -39,8 +38,8 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>校区列表</span>
-        <el-button style="float: right;" type="primary" >批量导出</el-button>
-        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd" >添加校区</el-button>
+        <el-button style="float: right;" type="primary">批量导出</el-button>
+        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加校区</el-button>
       </div>
       <Table :options="options" />
     </el-card>
@@ -55,7 +54,7 @@
 
       <el-form ref="createForm" :model="createForm" :rules="rules" label-width="100px">
         <el-form-item label="校区名称：" prop="campusName">
-          <el-input v-model="createForm.campusName" placeholder="校区名称"/>
+          <el-input v-model="createForm.campusName" placeholder="校区名称" />
         </el-form-item>
         <el-form-item label="校区封面：" prop="campusImg">
           <el-upload
@@ -63,9 +62,10 @@
             action="#"
             :show-file-list="false"
             :on-change="beforeAvatarUpload"
-            :auto-upload="false">
+            :auto-upload="false"
+          >
             <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+            <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
         <el-form-item label="可运营商品：" prop="goods">
@@ -74,8 +74,8 @@
               :data="goodsTree"
               show-checkbox
               node-key="id"
-              :props="defaultProps">
-            </el-tree>
+              :props="defaultProps"
+            />
           </div>
         </el-form-item>
         <el-form-item label="合作方式：" prop="cooperationMethod">
@@ -85,30 +85,30 @@
         </el-form-item>
 
         <el-form-item label="校区地址：" prop="address">
-          <el-input v-model="createForm.address" placeholder="校区地址"/>
+          <el-input v-model="createForm.address" placeholder="校区地址" />
         </el-form-item>
 
         <el-form-item label="校区介绍：" prop="introduction">
-          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="校区介绍"/>
+          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="校区介绍" />
         </el-form-item>
 
         <el-form-item label="负责人：" prop="principal">
-          <el-input v-model="createForm.principal" placeholder="负责人"/>
+          <el-input v-model="createForm.principal" placeholder="负责人" />
         </el-form-item>
 
         <el-form-item label="联系电话：" prop="tel">
-          <el-input v-model="createForm.tel" placeholder="联系电话"/>
+          <el-input v-model="createForm.tel" placeholder="联系电话" />
         </el-form-item>
 
         <el-form-item label="校区状态：" prop="status">
           <el-switch
-            style="display: block;marginTop: 6px;"
             v-model="createForm.status"
+            style="display: block;marginTop: 6px;"
             active-color="#13ce66"
             inactive-color="#ff4949"
             active-text="正常营业"
-            inactive-text="停止营业">
-          </el-switch>
+            inactive-text="停止营业"
+          />
         </el-form-item>
       </el-form>
 
@@ -126,9 +126,8 @@ import { getCampusList } from '@/api/campus'
 
 export default {
   name: 'Management',
-  components: {Table},
+  components: { Table },
   data() {
-
     const checkEmail = (rule, value, callback) => {
       if (value) {
         const reg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
@@ -156,7 +155,6 @@ export default {
         return callback()
       }
     }
-
 
     return {
       options: {
@@ -190,7 +188,7 @@ export default {
             name: '订单状态',
             value: 'status',
             width: '10%'
-          },{
+          }, {
             name: '提交时间',
             value: 'time',
             width: '10%'
@@ -255,123 +253,123 @@ export default {
       imageUrl: '',
 
       goodsTree: [
-		{
-			label: "上海校区",
-			value: 10000,
-			children:[
-				{
-					label: "静安校区",
-					value: 10001,
-					children: [
-						{
-							label: "静安训练中心",
-							value: 10002
-						}
-					]
-				},
-				{
-					label: "闵行校区",
-					value: 10003,
-					children: [{
-						label: "闵行训练中心",
-						value: 10004
-					}]
-				}
-			]
-		},
-		{
-			label: "北京校区",
-			value: 10005,
-			children: [{
-					label: "北京嘉里中心",
-					value: 10006
-				}
-			]
-		},
-		{
-			label: "贵州省校区",
-			value: 10007,
-			children: [{
-				label: "贵阳市校区",
-				value: 10008,
-				children: [
-					{
-						label: "贵州训练中心",
-						value: 10009
-					}
-				]
-			}]
-		},
-		{
-			label: "香港校区",
-			value: 10010,
-			children: [{
-				label: "香港训练中心",
-				value: 10011
-			}]
-		},
-		{
-			label: "测试校区（省)",
-			value: 90000,
-			children: [
-				{
-					label: "测试省属培训中心1",
-					value: 90001
-				},
-				{
-					label: "测试校区（市）",
-					value: 90002,
-					children: [
-						{
-							label: "测试市属培训中心1",
-							value: 90003
-						},
-						{
-							label: "测试校区1（县)",
-							value: 90004,
-							children: [
-								{
-									label: "测试培训中心11",
-									value: 90005
-								},
-								{
-									label: "测试培训中心12",
-									value: 90006
-								}
-							]
-						},
-						{
-							label: "测试校区2（县)",
-							value: 90007,
-							children: [{
-									label: "测试培训中心21",
-									value: 90008
-								},
-								{
-									label: "测试培训中心22",
-									value: 90009
-								}
-							]
-						}
-					]
-				},
-			]
-		},
-		{
-			label: "测试总部直营校区",
-			value: 90010,
-			children: [
-				{
-					label: "测试直营校区1",
-					value: 90011
-				},
-				{
-					label: "测试直营校区2",
-					value: 90012,
-				}
-			]
-		},
-	],
+        {
+          label: '上海校区',
+          value: 10000,
+          children: [
+            {
+              label: '静安校区',
+              value: 10001,
+              children: [
+                {
+                  label: '静安训练中心',
+                  value: 10002
+                }
+              ]
+            },
+            {
+              label: '闵行校区',
+              value: 10003,
+              children: [{
+                label: '闵行训练中心',
+                value: 10004
+              }]
+            }
+          ]
+        },
+        {
+          label: '北京校区',
+          value: 10005,
+          children: [{
+            label: '北京嘉里中心',
+            value: 10006
+          }
+          ]
+        },
+        {
+          label: '贵州省校区',
+          value: 10007,
+          children: [{
+            label: '贵阳市校区',
+            value: 10008,
+            children: [
+              {
+                label: '贵州训练中心',
+                value: 10009
+              }
+            ]
+          }]
+        },
+        {
+          label: '香港校区',
+          value: 10010,
+          children: [{
+            label: '香港训练中心',
+            value: 10011
+          }]
+        },
+        {
+          label: '测试校区（省)',
+          value: 90000,
+          children: [
+            {
+              label: '测试省属培训中心1',
+              value: 90001
+            },
+            {
+              label: '测试校区（市）',
+              value: 90002,
+              children: [
+                {
+                  label: '测试市属培训中心1',
+                  value: 90003
+                },
+                {
+                  label: '测试校区1（县)',
+                  value: 90004,
+                  children: [
+                    {
+                      label: '测试培训中心11',
+                      value: 90005
+                    },
+                    {
+                      label: '测试培训中心12',
+                      value: 90006
+                    }
+                  ]
+                },
+                {
+                  label: '测试校区2（县)',
+                  value: 90007,
+                  children: [{
+                    label: '测试培训中心21',
+                    value: 90008
+                  },
+                  {
+                    label: '测试培训中心22',
+                    value: 90009
+                  }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          label: '测试总部直营校区',
+          value: 90010,
+          children: [
+            {
+              label: '测试直营校区1',
+              value: 90011
+            },
+            {
+              label: '测试直营校区2',
+              value: 90012
+            }
+          ]
+        }
+      ],
       defaultProps: {
         children: 'children',
         label: 'label'
@@ -379,33 +377,32 @@ export default {
     }
   },
 
-  mounted(){
+  mounted() {
     this.getListData()
   },
 
   methods: {
     onSubmit() {
-      console.log('submit!');
+      console.log('submit!')
     },
 
     getListData() {
-
-      let params = {
+      const params = {
         cid: 1
       }
 
       getCampusList(params).then(res => {
-        console.log('===========resresres=========================');
-        console.log(res);
-        console.log('====================================');
+        console.log('===========resresres=========================')
+        console.log(res)
+        console.log('====================================')
       })
-      let arr = this.options.columnDataInfo
-      let result = []
+      const arr = this.options.columnDataInfo
+      const result = []
 
-      for(let i=0; i<10; i++){
-        let obj = {}
-        for(let item of arr){
-          obj[item.value] = Math.random()*10
+      for (let i = 0; i < 10; i++) {
+        const obj = {}
+        for (const item of arr) {
+          obj[item.value] = Math.random() * 10
         }
         result.push(obj)
       }
@@ -442,19 +439,19 @@ export default {
     },
 
     beforeAvatarUpload(file) {
-      console.log('==========filefilefilefile==========================');
-      console.log(file);
-      console.log('====================================');
-      const isJPG = file.type === 'image/jpeg';
-      const isLt2M = file.size / 1024 / 1024 < 2;
-      this.imageUrl = URL.createObjectURL(file.raw);
+      console.log('==========filefilefilefile==========================')
+      console.log(file)
+      console.log('====================================')
+      const isJPG = file.type === 'image/jpeg'
+      const isLt2M = file.size / 1024 / 1024 < 2
+      this.imageUrl = URL.createObjectURL(file.raw)
       // if (!isJPG) {
       //   this.$message.error('上传头像图片只能是 JPG 格式!');
       // }
       // if (!isLt2M) {
       //   this.$message.error('上传头像图片大小不能超过 2MB!');
       // }
-      return isJPG && isLt2M;
+      return isJPG && isLt2M
     }
   }
 }
