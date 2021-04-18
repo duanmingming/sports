@@ -46,7 +46,15 @@ module.exports = {
         },
         secure: false
       }
-    }
+    },
+    '/private/v1': {
+        'target': 'http://localhost:8888',
+        changeOrigin: true,
+        pathRewrite: {
+          ['^' + '/prod-api']: ''
+        },
+        secure: false
+      }
   },
   configureWebpack: {
     // provide the app's title in webpack's name field, so that
