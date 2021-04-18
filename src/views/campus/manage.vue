@@ -370,21 +370,20 @@ export default {
         children: 'children',
         label: 'label'
       },
-      value:""
+      value: ''
     }
   },
 
   mounted() {
     login().then(res => {
-      let { token } = res.data
+      const { token } = res.data
       localStorage.setItem('token', token)
       getUserInfo().then(res => {
-        let {F0001:cid} = res.data
+        const { F0001: cid } = res.data
         this.cid = cid
       })
       this.getListData()
     })
-    
   },
 
   methods: {
@@ -398,11 +397,11 @@ export default {
         cmode: 2,
         pageNum: 1,
         pageSize: 10,
-        name: ""
+        name: ''
       }
 
       getCampusList(params).then(res => {
-        for(let item of res.data.items){
+        for (const item of res.data.items) {
           item.F0094 = item.F0094 === 0 ? '正常营业' : '停业'
         }
         this.options.data = res.data.items
@@ -421,7 +420,6 @@ export default {
 
       // this.options.data = result
       // this.options.total = 30
-      
     },
 
     handleClose() {
@@ -468,7 +466,7 @@ export default {
     },
 
     handleTable(val) {
-      console.log(val, '*****');
+      console.log(val, '*****')
     }
   }
 }

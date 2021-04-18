@@ -97,7 +97,7 @@ export default {
       showDialog: false,
       redirect: undefined,
       otherQuery: {},
-      logoImg:logoImg
+      logoImg: logoImg
     }
   },
   watch: {

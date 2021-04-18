@@ -21,8 +21,8 @@ export function login() {
     url: '/api/private/v1/login',
     method: 'get',
     params: {
-      username: "admin",
-      password: "123456"
+      username: 'admin',
+      password: '123456'
     }
   })
 }
