@@ -10,8 +10,26 @@ import request from '@/utils/request'
 
 export function getCampusList(query) {
   return request({
-    url: '/api/private/v1/users/1',
+    url: '/api/private/v1/school/list',
     method: 'get',
     params: query
+  })
+}
+
+export function login() {
+  return request({
+    url: '/api/private/v1/login',
+    method: 'get',
+    params: {
+      username: "admin",
+      password: "123456"
+    }
+  })
+}
+
+export function getUserInfo() {
+  return request({
+    url: '/api/private/v1/users/info',
+    method: 'get'
   })
 }

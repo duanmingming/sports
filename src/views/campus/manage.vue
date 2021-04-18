@@ -41,7 +41,7 @@
         <el-button style="float: right;" type="primary">批量导出</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加校区</el-button>
       </div>
-      <Table :options="options" />
+      <Table :options="options" @handleTable="handleTable" />
     </el-card>
 
     <el-dialog
@@ -53,10 +53,10 @@
     >
 
       <el-form ref="createForm" :model="createForm" :rules="rules" label-width="100px">
-        <el-form-item label="校区名称：" prop="campusName">
-          <el-input v-model="createForm.campusName" placeholder="校区名称" />
+        <el-form-item label="校区名称：" prop="F0002">
+          <el-input v-model="createForm.F0002" placeholder="校区名称" />
         </el-form-item>
-        <el-form-item label="校区封面：" prop="campusImg">
+        <el-form-item label="校区封面：" prop="F0033">
           <el-upload
             class="avatar-uploader"
             action="#"
@@ -68,7 +68,7 @@
             <i v-else class="el-icon-plus avatar-uploader-icon" />
           </el-upload>
         </el-form-item>
-        <el-form-item label="可运营商品：" prop="goods">
+        <el-form-item label="可运营商品：" prop="F0013">
           <div class="goodsSelect">
             <el-tree
               :data="goodsTree"
@@ -84,25 +84,25 @@
           <el-radio v-model="createForm.cooperationMethod" label="3">合作伙伴</el-radio>
         </el-form-item>
 
-        <el-form-item label="校区地址：" prop="address">
-          <el-input v-model="createForm.address" placeholder="校区地址" />
+        <el-form-item label="校区地址：" prop="F0024">
+          <el-input v-model="createForm.F0024" placeholder="校区地址" />
         </el-form-item>
 
         <el-form-item label="校区介绍：" prop="introduction">
           <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="校区介绍" />
         </el-form-item>
 
-        <el-form-item label="负责人：" prop="principal">
-          <el-input v-model="createForm.principal" placeholder="负责人" />
+        <el-form-item label="负责人：" prop="F0011">
+          <el-input v-model="createForm.F0011" placeholder="负责人" />
         </el-form-item>
 
-        <el-form-item label="联系电话：" prop="tel">
-          <el-input v-model="createForm.tel" placeholder="联系电话" />
+        <el-form-item label="联系电话：" prop="F0008">
+          <el-input v-model="createForm.F0008" placeholder="联系电话" />
         </el-form-item>
 
-        <el-form-item label="校区状态：" prop="status">
+        <el-form-item label="校区状态：" prop="F0094">
           <el-switch
-            v-model="createForm.status"
+            v-model="createForm.F0094"
             style="display: block;marginTop: 6px;"
             active-color="#13ce66"
             inactive-color="#ff4949"
@@ -122,7 +122,7 @@
 
 <script>
 import Table from '@/components/Table/index'
-import { getCampusList } from '@/api/campus'
+import { getCampusList, login, getUserInfo } from '@/api/campus'
 
 export default {
   name: 'Management',
@@ -164,33 +164,29 @@ export default {
         style: 'width: 100%; marginLeft:10px',
         columnDataInfo: [
           {
-            name: '订单编号',
-            value: 'orderNo',
+            name: '编号',
+            value: 'F0000',
             width: '15%'
           },
           {
-            name: '用户昵称',
-            value: 'userName',
+            name: '名称',
+            value: 'F0002',
             width: '15%'
           }, {
-            name: '手机号',
-            value: 'tel',
+            name: '营业状态',
+            value: 'F0094',
             width: '10%'
           }, {
-            name: '课程名称',
-            value: 'className',
+            name: '地址',
+            value: 'F0024',
             width: '30%'
           }, {
-            name: '订单金额',
-            value: 'amount',
+            name: '联系人',
+            value: 'F0007',
             width: '10%'
           }, {
-            name: '订单状态',
-            value: 'status',
-            width: '10%'
-          }, {
-            name: '提交时间',
-            value: 'time',
+            name: '建立日期',
+            value: 'F0091',
             width: '10%'
           }
         ],
@@ -373,12 +369,22 @@ export default {
       defaultProps: {
         children: 'children',
         label: 'label'
-      }
+      },
+      value:""
     }
   },
 
   mounted() {
-    this.getListData()
+    login().then(res => {
+      let { token } = res.data
+      localStorage.setItem('token', token)
+      getUserInfo().then(res => {
+        let {F0001:cid} = res.data
+        this.cid = cid
+      })
+      this.getListData()
+    })
+    
   },
 
   methods: {
@@ -388,13 +394,19 @@ export default {
 
     getListData() {
       const params = {
-        cid: 1
+        cid: 1,
+        cmode: 2,
+        pageNum: 1,
+        pageSize: 10,
+        name: ""
       }
 
       getCampusList(params).then(res => {
-        console.log('===========resresres=========================')
-        console.log(res)
-        console.log('====================================')
+        for(let item of res.data.items){
+          item.F0094 = item.F0094 === 0 ? '正常营业' : '停业'
+        }
+        this.options.data = res.data.items
+        this.options.total = res.data.total
       })
       const arr = this.options.columnDataInfo
       const result = []
@@ -407,8 +419,9 @@ export default {
         result.push(obj)
       }
 
-      this.options.data = result
-      this.options.total = 30
+      // this.options.data = result
+      // this.options.total = 30
+      
     },
 
     handleClose() {
@@ -452,6 +465,10 @@ export default {
       //   this.$message.error('上传头像图片大小不能超过 2MB!');
       // }
       return isJPG && isLt2M
+    },
+
+    handleTable(val) {
+      console.log(val, '*****');
     }
   }
 }

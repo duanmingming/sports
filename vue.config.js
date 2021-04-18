@@ -43,7 +43,8 @@ module.exports = {
         changeOrigin: true,
         pathRewrite: {
           ['^' + '/dev-api']: ''
-        }
+        },
+        secure: false
       }
     }
   },

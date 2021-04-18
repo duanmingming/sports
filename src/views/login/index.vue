@@ -1,9 +1,9 @@
 <template>
   <div class="login-container">
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
-
+      <img :src="logoImg" class="logoImg" alt="">
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">耐克运动营线上管理系统</h3>
       </div>
 
       <el-form-item prop="username">
@@ -45,61 +45,24 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-tooltip v-model="capsTooltip" content="Caps lock is On" placement="right" manual>
-        <el-form-item prop="password">
-          <span class="svg-container">
-            <svg-icon icon-class="password" />
-          </span>
-          <el-input
-            :key="passwordType"
-            ref="password"
-            v-model="loginForm.password"
-            :type="passwordType"
-            placeholder="Password"
-            name="password"
-            tabindex="2"
-            autocomplete="on"
-            @keyup.native="checkCapslock"
-            @blur="capsTooltip = false"
-            @keyup.enter.native="handleLogin"
-          />
-          <span class="show-pwd" @click="showPwd">
-            <svg-icon :icon-class="passwordType === 'password' ? 'eye' : 'eye-open'" />
-          </span>
-        </el-form-item>
-      </el-tooltip>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-
-      <div style="position:relative">
-        <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
-        </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
-
-        <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
+      <div style="position:relative;height:30px">
+        <el-button class="third-button" type="text" @click="showDialog=true">
+          记住密码
+        </el-button>
+        <el-button class="thirdparty-button" type="text" @click="showDialog=true">
+          忘记密码
         </el-button>
       </div>
     </el-form>
-
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
-      <br>
-      <br>
-      <br>
-      <social-sign />
-    </el-dialog>
   </div>
 </template>
 
 <script>
 import { validUsername } from '@/utils/validate'
 import SocialSign from './components/SocialSignin'
+import logoImg from '@/assets/logo_images/logo.png'
 
 export default {
   name: 'Login',
@@ -133,7 +96,8 @@ export default {
       loading: false,
       showDialog: false,
       redirect: undefined,
-      otherQuery: {}
+      otherQuery: {},
+      logoImg:logoImg
     }
   },
   watch: {
@@ -229,8 +193,8 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#283443;
-$light_gray:#fff;
-$cursor: #fff;
+$light_gray:black;
+$cursor: black;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
   .login-container .el-input input {
@@ -264,7 +228,7 @@ $cursor: #fff;
 
   .el-form-item {
     border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(0, 0, 0, 0.1);
+    background: #fff;
     border-radius: 5px;
     color: #454545;
   }
@@ -274,26 +238,37 @@ $cursor: #fff;
 <style lang="scss" scoped>
 $bg:#2d3a4b;
 $dark_gray:#889aa4;
-$light_gray:#eee;
+$light_gray:#69696b;
+
+.logoImg {
+  width: 200px;
+  height: 200px;
+  position: absolute;
+  top: -98px;
+  left: 153px;
+  background-color: #e3e3e3;
+  border-radius: 35%;
+}
 
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: $bg;
+  background-color: #267979;
   overflow: hidden;
+  color:#69696b;
 
   .login-form {
     position: relative;
     width: 520px;
     max-width: 100%;
     padding: 160px 35px 0;
-    margin: 0 auto;
-    overflow: hidden;
+    margin: 360px auto;
+    background-color: #eeebeb;
   }
 
   .tips {
     font-size: 14px;
-    color: #fff;
+    color: #69696b;
     margin-bottom: 10px;
 
     span {
@@ -335,8 +310,14 @@ $light_gray:#eee;
 
   .thirdparty-button {
     position: absolute;
-    right: 0;
-    bottom: 6px;
+    right: 12px;
+    bottom: 23px;
+  }
+
+  .third-button {
+    position: absolute;
+    left: 12px;
+    bottom: 23px;
   }
 
   @media only screen and (max-width: 470px) {
