@@ -192,7 +192,7 @@ export default {
 /* 修复input 背景不协调 和光标变色 */
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
-$bg:#283443;
+$bg:#1890ff;
 $light_gray:black;
 $cursor: black;
 
@@ -253,16 +253,18 @@ $light_gray:#69696b;
 .login-container {
   min-height: 100%;
   width: 100%;
-  background-color: #267979;
+  background-color: #1890ff;
   overflow: hidden;
   color:#69696b;
 
   .login-form {
     position: relative;
     width: 520px;
+    height: 430px;
     max-width: 100%;
-    padding: 160px 35px 0;
-    margin: 360px auto;
+    padding: 120px 35px 0;
+    margin: 0 auto;
+    margin-top: calc(50vh - 170px);
     background-color: #eeebeb;
   }
 
