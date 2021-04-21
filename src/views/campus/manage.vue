@@ -17,6 +17,7 @@
           <el-cascader
             v-model="value"
             :options="goodsTree"
+            :props="{ checkStrictly: true }"
           />
         </el-form-item>
         <el-form-item label="建立时间">
@@ -52,7 +53,14 @@
       :close-on-click-modal="false"
     >
 
-      <el-form ref="createForm" :model="createForm" :rules="rules" label-width="100px">
+      <el-form ref="createForm" :model="createForm" :rules="rules" label-width="150px">
+        <el-form-item label="上级地区：" prop="F0006" style="width:100%">
+          <el-cascader
+            v-model="createForm.F0006"
+            :options="goodsTree"
+            :props="{ checkStrictly: true }"
+          />
+        </el-form-item>
         <el-form-item label="校区名称：" prop="F0002">
           <el-input v-model="createForm.F0002" placeholder="校区名称" />
         </el-form-item>
@@ -69,27 +77,27 @@
           </el-upload>
         </el-form-item>
         <el-form-item label="可运营商品：" prop="F0013">
-          <div class="goodsSelect">
-            <el-tree
-              :data="goodsTree"
-              show-checkbox
-              node-key="id"
-              :props="defaultProps"
+          <el-select v-model="createForm.F0013" style="width:100%" placeholder="请选择可运营商品">
+            <el-option
+              v-for="item in runGoodsOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value"
             />
-          </div>
+          </el-select>
         </el-form-item>
-        <el-form-item label="合作方式：" prop="cooperationMethod">
-          <el-radio v-model="createForm.cooperationMethod" label="1">官方自营</el-radio>
-          <el-radio v-model="createForm.cooperationMethod" label="2">区域授权</el-radio>
-          <el-radio v-model="createForm.cooperationMethod" label="3">合作伙伴</el-radio>
+        <el-form-item label="合作方式：" prop="F0034">
+          <el-radio v-model="createForm.F0034" label="官方自营">官方自营</el-radio>
+          <el-radio v-model="createForm.F0034" label="区域授权">区域授权</el-radio>
+          <el-radio v-model="createForm.F0034" label="合作伙伴">合作伙伴</el-radio>
         </el-form-item>
 
         <el-form-item label="校区地址：" prop="F0024">
           <el-input v-model="createForm.F0024" placeholder="校区地址" />
         </el-form-item>
 
-        <el-form-item label="校区介绍：" prop="introduction">
-          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="校区介绍" />
+        <el-form-item label="校区介绍：" prop="F0035">
+          <el-input v-model="createForm.F0035" type="textarea" :rows="3" placeholder="校区介绍" />
         </el-form-item>
 
         <el-form-item label="负责人：" prop="F0011">
@@ -122,7 +130,7 @@
 
 <script>
 import Table from '@/components/Table/index'
-import { getCampusList, login, getUserInfo } from '@/api/campus'
+import { getCampusList, login, getUserInfo, uploadImage, addCampus } from '@/api/campus'
 
 export default {
   name: 'Management',
@@ -212,35 +220,37 @@ export default {
       title: '添加校区',
       dialogVisible: false,
       createForm: {
-        userName: null,
-        showName: null,
-        organization: null,
-        email: null,
-        tel: null,
-        expireTime: null,
-        remark: null,
-        id: null,
-        jobNo: null
+        F0002: null,
+        F0033: null,
+        F0013: null,
+        F0034: '官方自营',
+        F0024: null,
+        F0035: null,
+        F0011: null,
+        F0008: null,
+        F0094: null
       },
       rules: {
-        campusName: [
+        F0002: [
           { required: true, message: '请输入校区名称', trigger: 'blur' }
         ],
-        showName: [
-          { required: true, message: '请输入', trigger: 'blur' },
-          { min: 2, max: 50, message: '长度至少2位至多50位', trigger: 'blur' }
+        F0034: [
+          { required: true, message: '请输入', trigger: 'blur' }
         ],
-        email: [
-          { validator: checkEmail, trigger: 'blur' }
+        F0024: [
+          { required: true, message: '请输入校区地址', trigger: 'blur' }
         ],
-        tel: [
-          { validator: checkTel, trigger: 'blur' }
+        F0035: [
+          { required: true, message: '请输入校区介绍', trigger: 'blur' }
         ],
-        remark: [
-          { max: 200, message: '长度至多200位', trigger: 'blur' }
+        F0011: [
+          { required: true, message: '请输入负责人', trigger: 'blur' }
         ],
-        jobNo: [
-          { max: 50, message: '长度至多50位', trigger: 'blur' }
+        F0008: [
+          { required: true, message: '请输入联系电话', trigger: 'blur' }
+        ],
+        F0013: [
+          { required: true, message: '请选择可运营商品', trigger: 'change' }
         ]
       },
 
@@ -370,7 +380,48 @@ export default {
         children: 'children',
         label: 'label'
       },
-      value: ''
+      value: '',
+      file: null,
+      runGoodsOptions: [
+        {
+          value: '足球 SOCCER',
+          label: '足球 SOCCER'
+        }, {
+          value: '篮球 BASKETBALL',
+          label: '篮球 BASKETBALL'
+        }, {
+          value: '游泳 SWIM',
+          label: '游泳 SWIM'
+        }, {
+          value: '美式橄榄球  AMERICAN FOOTBALL',
+          label: '美式橄榄球  AMERICAN FOOTBALL'
+        }, {
+          value: '棒球 BASEBALL',
+          label: '棒球 BASEBALL'
+        },
+        {
+          value: '高尔夫 GOLF',
+          label: '高尔夫 GOLF'
+        }, {
+          value: '体适能 MULTISPORT',
+          label: '体适能 MULTISPORT'
+        }, {
+          value: '活动商品',
+          label: '活动商品'
+        }, {
+          value: '赛事商品',
+          label: '赛事商品'
+        }, {
+          value: '教练员培训',
+          label: '教练员培训'
+        }, {
+          value: '普通商品',
+          label: '普通商品'
+        }, {
+          value: '短期营商品',
+          label: '短期营商品'
+        }
+      ]
     }
   },
 
@@ -395,8 +446,8 @@ export default {
       const params = {
         cid: 1,
         cmode: 2,
-        pageNum: 1,
-        pageSize: 10,
+        pageNum: this.options.pageNum,
+        pageSize: this.options.pageSize,
         name: ''
       }
 
@@ -428,6 +479,7 @@ export default {
       // this.$refs['createForm'].resetFields()
       // this.resetTree = !this.resetTree
       // this.defaultText = ''
+      this.$refs['createForm'].resetFields()
       this.createForm = {
         userName: null,
         showName: null,
@@ -442,7 +494,29 @@ export default {
     },
 
     handleSubmit() {
+      this.$refs['createForm'].validate((valid) => {
+        if (valid) {
+          if (this.file) {
+            const fd = new FormData()
+            fd.append('file', this.file.raw, this.file.name)
+            uploadImage(fd).then(res => {
+              const createForm = this.createForm
+              createForm.F0033 = res.data.file
+              createForm.F0094 = createForm.F0094 ? 0 : 1
+              createForm.F0006 = createForm.F0006.shift()
 
+              addCampus(createForm).then(res => {
+                this.getListData()
+              })
+            })
+          } else {
+            this.$message.error('请上传校区封面')
+          }
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
     },
 
     handleAdd() {
@@ -450,23 +524,23 @@ export default {
     },
 
     beforeAvatarUpload(file) {
-      console.log('==========filefilefilefile==========================')
-      console.log(file)
-      console.log('====================================')
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
       this.imageUrl = URL.createObjectURL(file.raw)
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      return isJPG && isLt2M
+      this.file = file
     },
 
-    handleTable(val) {
-      console.log(val, '*****')
+    handleTable(data) {
+      if (data.type === 'getTable') {
+        this.getListData()
+      } else if (data.type === 'pageSizeChange') {
+        this.options.pageSize = data.pageSize
+      } else if (data.type === 'pageNumChange') {
+        this.options.pageNum = data.pageNum
+      } else if (data.type === '查看') {
+        console.log(data)
+        this.createForm = data.data
+        this.imageUrl = data.data.F0033
+        this.dialogVisible = true
+      }
     }
   }
 }

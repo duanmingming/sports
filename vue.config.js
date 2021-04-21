@@ -36,7 +36,7 @@ module.exports = {
       warnings: false,
       errors: true
     },
-    before: require('./mock/mock-server.js'),
+    after: require('./mock/mock-server.js'),
     proxy: {
       '/private/v1': {
         'target': 'http://49.233.36.222:8888',

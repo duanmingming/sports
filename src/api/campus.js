@@ -33,3 +33,19 @@ export function getUserInfo() {
     method: 'get'
   })
 }
+
+export function uploadImage(data) {
+  return request({
+    url: '/api/private/v1/upload',
+    method: 'post',
+    data
+  })
+}
+
+export function addCampus(data) {
+  return request({
+    url: '/api/private/v1/school',
+    method: 'post',
+    data
+  })
+}
