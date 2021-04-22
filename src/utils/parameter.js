@@ -102,5 +102,61 @@ module.exports = {
     210: '普通商品',
     220: '短期营商品'
   },
-  'PA0044': { 0: '离职', 1: '在职' }
+  'PA0044': { 0: '离职', 1: '在职' },
+  'PA0045': [
+    {
+      label: '足球 SOCCER',
+      value: 110
+    },{
+      label: '篮球 BASKETBALL',
+      value: 120
+    },
+    {
+      label: '游泳 SWIM',
+      value: 130
+    },
+    {
+      label: '美式橄榄球 AMERICAN FOOTBALL',
+      value: 140
+    },
+    {
+      label: '棒球 BASEBALL',
+      value: 150
+    },
+    {
+      label: '高尔夫 GOLF',
+      value: 160
+    },
+    {
+      label: '体适能 MULTISPORT',
+      value: 170
+    },
+    {
+      label: '活动商品',
+      value: 180
+    },
+    {
+      label: '赛事商品',
+      value: 190
+    },
+    {
+      label: '教练员培训',
+      value: 200
+    },
+    {
+      label: '普通商品',
+      value: 210
+    },
+    {
+      label: '短期营商品',
+      value: 220
+    }
+  ],
+  'PA0046': [{
+    label: 0,
+    value: '上架'
+  },{
+    label: 1,
+    value: '下架'
+  }]
 }

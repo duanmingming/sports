@@ -150,6 +150,20 @@ export default {
       }
     }
 
+    const checkNum = (rule, value, callback) => {
+      if (value) {
+        const reg = /\D/
+        const flag = value.match(reg)
+        if (flag) {
+          return callback(new Error('请只输入数字'))
+        } else {
+          return callback()
+        }
+      } else {
+        return callback()
+      }
+    }
+
     const checkTel = (rule, value, callback) => {
       if (value) {
         const reg = /^1(3|4|5|6|7|8|9)\d{9}$/
@@ -432,6 +446,7 @@ export default {
       getUserInfo().then(res => {
         const { F0001: cid } = res.data
         this.cid = cid
+        localStorage.setItem('cid', cid)
       })
       this.getListData()
     })

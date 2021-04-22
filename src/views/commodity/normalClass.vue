@@ -40,14 +40,14 @@
       </div>
       <Table :options="options" />
     </el-card>
-    <Dialog :options="dialogOptions" />
+    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
   </div>
 </template>
 
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { getCampusList } from '@/api/campus'
+import { addNormalClass } from '@/api/commodity'
 import parameters from '@/utils/parameter'
 
 export default {
@@ -82,6 +82,20 @@ export default {
       }
     }
 
+    const checkNum = (rule, value, callback) => {
+      if (value) {
+        const reg = /\D/
+        const flag = value.match(reg)
+        if (flag) {
+          return callback(new Error('请只输入数字'))
+        } else {
+          return callback()
+        }
+      } else {
+        return callback()
+      }
+    }
+
     return {
       options: {
         data: [],
@@ -91,27 +105,27 @@ export default {
         columnDataInfo: [
           {
             name: '编号',
-            value: 'number',
+            value: 'F0002',
             width: '15%'
           },
           {
             name: '名称',
-            value: 'userName',
+            value: 'F0003',
             width: '15%'
           }, {
             name: '状态',
-            value: 'tel',
+            value: 'F0094',
             width: '10%'
           }, {
-            name: '颜色',
-            value: 'className',
+            name: '课时',
+            value: 'F0009',
             width: '30%'
           }, {
             name: '价格',
-            value: 'amount',
+            value: 'F0012',
             width: '10%'
           }, {
-            name: '尺码',
+            name: '销量',
             value: 'status',
             width: '10%'
           }, {
@@ -311,7 +325,10 @@ export default {
           {
             type: 'input',
             label: '课程名称',
-            rules: { required: true, message: '请输入课程名称', trigger: 'blur'},
+            rules: [
+                { required: true, message: '请输入课程名称', trigger: 'blur'},
+                { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
+                ],
             name:'F0003'
           },
           {
@@ -329,70 +346,47 @@ export default {
           {
             type: 'input',
             label: '课时数量',
-            rules: [],
+            rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0009'
           },
           {
             type: 'input',
             label: '赠送课时',       
-            rules: [],
+            rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0018'
           },
           {
             type: 'input',
             label: '课时有效期',     
-            rules: [],
+            rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0019'
           },
           {
             type: 'input',
             label: '课程价格',
-            rules: {
-              required: true,
-              message: '请输入课程价格',
-              trigger: 'blur'
-            },
+            rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0012'
           },
           {
             type: 'input',
             label: '优惠价格',
-            rules: {
-              required: true,
-              message: '请输入优惠价格',
-              trigger: 'blur'
-            },
+            rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0013'
           },
           {
             type: 'text',
             label: '课程简介',
-            rules: {
-              required: true,
-              message: '请输入课程简介',
-              trigger: 'blur'
-            },
             name: 'F0014',
             roew:3
           },
           {
             type: 'text',
             label: '授课教练',
-            rules: {
-              required: true,
-              message: '请输入授课教练',
-              trigger: 'blur'
-            },
             name: 'F0006'
           },
           {
             type: 'radio',
             label: '课程状态',
-            rules: {
-              required: true,
-              message: '请选择课程状态',
-              trigger: 'change'
-            },
             name: 'F0094',
             options: parameters.PA0046
           }
@@ -435,49 +429,23 @@ export default {
       this.options.total = 30
     },
 
-    handleClose() {
-      this.dialogVisible = false
-      // this.editFlag = false
-      // this.$refs['createForm'].resetFields()
-      // this.resetTree = !this.resetTree
-      // this.defaultText = ''
-      this.createForm = {
-        userName: null,
-        showName: null,
-        organization: null,
-        email: null,
-        tel: null,
-        expireTime: null,
-        remark: null,
-        id: null,
-        jobNo: null
-      }
-    },
-
-    handleSubmit() {
-
-    },
-
     handleAdd() {
-      //this.dialogVisible = true
-      this.dialogOptions.show = true
+        this.dialogOptions.show = !this.dialogOptions.show
     },
 
-    beforeAvatarUpload(file) {
-      console.log('==========filefilefilefile==========================')
-      console.log(file)
-      console.log('====================================')
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-      //this.imageUrl = URL.createObjectURL(file.raw)
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      return isJPG && isLt2M
+    handleSubmit(data, callback){
+        console.log(data, '111111111');
+        let cid = localStorage.getItem('cid')
+        data.F0001 = cid
+        data.F0002 = 0
+        addNormalClass(data).then(res => {
+            
+        }).catch(err => {
+            console.log(err)
+            callback()
+        })
     }
+
   }
 }
 </script>

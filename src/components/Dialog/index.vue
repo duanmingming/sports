@@ -65,7 +65,7 @@
 
             <template v-else-if="item.type === 'radio'">
               <el-radio-group v-model="form[item.name]">
-                <el-radio v-for="radioOption in item.options" :key="radioOption" :label="radioOption">{{ radioOption }}</el-radio>
+                <el-radio v-for="radioOption in item.options" :key="radioOption.label" :label="radioOption.label">{{ radioOption.value }}</el-radio>
               </el-radio-group>
             </template>
 
@@ -74,10 +74,10 @@
                 class="avatar-uploader"
                 action="#"
                 :show-file-list="false"
-                :on-change="beforeAvatarUpload"
+                :on-change="(file, fileArr) => beforeAvatarUpload(file, fileArr, item.name)"
                 :auto-upload="false"
               >
-                <img v-if="imageUrl" :src="imageUrl" class="avatar">
+                <img v-if="form[item.name]" :src="form[item.name]" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
               </el-upload>
             </template>
@@ -99,6 +99,7 @@
 </template>
 
 <script>
+import { uploadImage } from '@/api/campus'
 export default {
   props: {
     options: {
@@ -171,8 +172,9 @@ export default {
             }
           ],
           img: {
+            type: 'img',
             name: '',
-            url: ''
+            label: ''
           },
           data: {}
         }
@@ -187,7 +189,7 @@ export default {
       initFrom: null,
       loading: false,
       imageUrl: null,
-      file: null
+      file: {}
     }
   },
 
@@ -229,6 +231,7 @@ export default {
     handleClose() {
       this.$refs['form'].resetFields()
       this.form = this.initFrom
+      this.file= {}
       this.loading = false
       this.dialogVisible = false
     },
@@ -237,10 +240,17 @@ export default {
       this.$refs['form'].validate((valid) => {
         if (valid) {
           if (this.file) {
-            const fd = new FormData()
-            fd.append('file', this.file.raw, this.file.name)
-            uploadImage(fd).then(res => {
-              this.form[this.options.img.name] = res.data.file
+            let imgReq = []
+            for(let key in this.file){
+              let fd = new FormData()
+              fd.append('file', this.file[key].raw, this.file[key].name)
+              imgReq.push(uploadImage(fd))
+            }
+            Promise.all(imgReq).then(res => {
+              let keyArr = Object.keys(this.file)
+              for(let i=0; i<res.length; i++){
+                this.form[keyArr[i]] = res[i].data.file
+              }
               this.loading = true
               this.$emit('handleSubmit', this.form, res => {
                 if (this.dialogVisible) {
@@ -248,9 +258,10 @@ export default {
                   if (res.success) {
                     this.$refs['form'].resetFields()
                     this.form = this.initFrom
+                    this.file= {}
                     this.dialogVisible = false
                   } else {
-                    this.$message.error(res.error)
+                    //this.$message.error(res.error)
                   }
                 }
               })
@@ -263,9 +274,12 @@ export default {
       })
     },
 
-    beforeAvatarUpload(file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-      this.file = file
+    beforeAvatarUpload(file, fileArr, name) {
+      if(file){
+        this.form[name] = URL.createObjectURL(file.raw)
+        this.file[name] = file
+      }
+      
     }
   }
 

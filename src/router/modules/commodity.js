@@ -18,6 +18,14 @@ const commodityRouter = {
     icon: 'chart'
   },
   children: [{
+    path: 'normal',
+    component: () => import('@/views/commodity/normalClass'),
+    name: 'Normal',
+    meta: {
+      title: '基础课程管理',
+      noCache: true
+    }
+  },{
     path: 'general',
     component: () => import('@/views/commodity/general'),
     name: 'General',
