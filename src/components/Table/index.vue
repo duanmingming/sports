@@ -153,6 +153,10 @@ export default {
 
     handleSelectionChange(val) {
       this.multipleSelection = val
+      this.$emit('handleTable', {
+        type: 'multipleSelect',
+        data: val
+      })
     }
   }
 

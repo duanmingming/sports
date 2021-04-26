@@ -8,9 +8,7 @@
       <el-form :inline="true" :model="goodsQuery">
         <el-form-item label="上架状态">
           <el-select v-model="goodsQuery.status" placeholder="">
-            <el-option label="未上架" value="shanghai" />
-            <el-option label="审核中" value="beijing" />
-            <el-option label="已上架" value="shanghai1" />
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="上传时间">
@@ -20,13 +18,14 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
           />
         </el-form-item>
         <el-form-item label="">
           <el-input v-model="goodsQuery.others" placeholder="请输入商品名称或其他关键词" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="handleQuery">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -35,10 +34,10 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>普通商品列表</span>
-        <el-button style="float: right;" type="primary">批量删除</el-button>
+        <el-button style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>
-      <Table :options="options" />
+      <Table :options="options" @handleTable="handleTable" />
     </el-card>
     <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
   </div>
@@ -47,27 +46,13 @@
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { addNormalClass } from '@/api/commodity'
+import { addNormalClass, getNormalClass, editNormalClass, deleteNormalClass } from '@/api/commodity'
 import parameters from '@/utils/parameter'
 
 export default {
   name: 'General',
   components: { Table, Dialog },
   data() {
-    const checkEmail = (rule, value, callback) => {
-      if (value) {
-        const reg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
-        const flag = reg.test(value)
-        if (flag) {
-          return callback()
-        } else {
-          return callback(new Error('请填写正确的邮箱格式'))
-        }
-      } else {
-        return callback()
-      }
-    }
-
     const checkTel = (rule, value, callback) => {
       if (value) {
         const reg = /^1(3|4|5|6|7|8|9)\d{9}$/
@@ -84,8 +69,9 @@ export default {
 
     const checkNum = (rule, value, callback) => {
       if (value) {
+        console.log(value, 'PPPPPPPP');
         const reg = /\D/
-        const flag = value.match(reg)
+        const flag = (value + '').match(reg)
         if (flag) {
           return callback(new Error('请只输入数字'))
         } else {
@@ -97,6 +83,16 @@ export default {
     }
 
     return {
+      goodsQuery: {
+        status: '',
+        time: '',
+        others: ''
+      },
+
+      historyQuery: {
+
+      },
+
       options: {
         data: [],
         border: false,
@@ -125,16 +121,12 @@ export default {
             value: 'F0012',
             width: '10%'
           }, {
-            name: '销量',
-            value: 'status',
-            width: '10%'
-          }, {
             name: '上传人',
-            value: 'time',
+            value: 'F0090',
             width: '10%'
           }, {
             name: '上传时间',
-            value: 'time',
+            value: 'F0091',
             width: '10%'
           }
         ],
@@ -155,168 +147,12 @@ export default {
         pageNum: 1,
         pageSize: 10,
         pageSizes: [10, 20, 30],
-        multiple: true
-      },
-      goodsQuery: {
-        status: '',
-        time: '',
-        others: ''
-      },
-      title: '添加校区',
-      dialogVisible: false,
-      createForm: {
-        name: null,
-        color: null,
-        size: null,
-        img: null,
-        weight: null,
-        unitPrice: null,
-        discountedPrice: null,
-        introduction: null,
-        maker: null,
-        status: null
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        unitPrice: [
-          { required: true, message: '请输入单价', trigger: 'blur' }
-        ],
-        introduction: [
-          { required: true, message: '请输入商品简介', trigger: 'blur' }
-        ]
-      },
-
-      editFlag: false,
-
-      imageUrl: '',
-
-      goodsTree: [
-        {
-          label: '上海校区',
-          value: 10000,
-          children: [
-            {
-              label: '静安校区',
-              value: 10001,
-              children: [
-                {
-                  label: '静安训练中心',
-                  value: 10002
-                }
-              ]
-            },
-            {
-              label: '闵行校区',
-              value: 10003,
-              children: [{
-                label: '闵行训练中心',
-                value: 10004
-              }]
-            }
-          ]
-        },
-        {
-          label: '北京校区',
-          value: 10005,
-          children: [{
-            label: '北京嘉里中心',
-            value: 10006
-          }
-          ]
-        },
-        {
-          label: '贵州省校区',
-          value: 10007,
-          children: [{
-            label: '贵阳市校区',
-            value: 10008,
-            children: [
-              {
-                label: '贵州训练中心',
-                value: 10009
-              }
-            ]
-          }]
-        },
-        {
-          label: '香港校区',
-          value: 10010,
-          children: [{
-            label: '香港训练中心',
-            value: 10011
-          }]
-        },
-        {
-          label: '测试校区（省)',
-          value: 90000,
-          children: [
-            {
-              label: '测试省属培训中心1',
-              value: 90001
-            },
-            {
-              label: '测试校区（市）',
-              value: 90002,
-              children: [
-                {
-                  label: '测试市属培训中心1',
-                  value: 90003
-                },
-                {
-                  label: '测试校区1（县)',
-                  value: 90004,
-                  children: [
-                    {
-                      label: '测试培训中心11',
-                      value: 90005
-                    },
-                    {
-                      label: '测试培训中心12',
-                      value: 90006
-                    }
-                  ]
-                },
-                {
-                  label: '测试校区2（县)',
-                  value: 90007,
-                  children: [{
-                    label: '测试培训中心21',
-                    value: 90008
-                  },
-                  {
-                    label: '测试培训中心22',
-                    value: 90009
-                  }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '测试总部直营校区',
-          value: 90010,
-          children: [
-            {
-              label: '测试直营校区1',
-              value: 90011
-            },
-            {
-              label: '测试直营校区2',
-              value: 90012
-            }
-          ]
-        }
-      ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
+        multiple: true,
+        multipleSelect: []
       },
 
       dialogOptions: {
-        title: "添加课程相关信息",
+        title: "添加课程",
         labelWidth: "130px",
         labelPosition: "left",
         show:false,
@@ -383,15 +219,11 @@ export default {
             type: 'text',
             label: '授课教练',
             name: 'F0006'
-          },
-          {
-            type: 'radio',
-            label: '课程状态',
-            name: 'F0094',
-            options: parameters.PA0046
           }
         ]
-      }
+      },
+
+      statusOptions: parameters.PA0049
     }
   },
 
@@ -400,51 +232,111 @@ export default {
   },
 
   methods: {
-    onSubmit() {
-      console.log('submit!')
+    handleQuery() {
+      let {status, time, others} = this.goodsQuery
+      console.log(time, 'sdsdsd');
+      this.historyQuery = 
+      {
+        status,time,others
+      }
+      this.getListData()
     },
 
     getListData() {
+      console.log( this.historyQuery.status, this.historyQuery.hasOwnProperty('status'), ' this.historyQuery this.historyQuery');
       const params = {
-        cid: 1
+        cid: localStorage.getItem('cid'),
+        pageNum: this.options.pageNum,
+        pageSize: this.options.pageSize,
+        name: this.historyQuery.hasOwnProperty('others') ? this.historyQuery.others : "",
+        time:  this.historyQuery.hasOwnProperty('time') ? this.historyQuery.time : null,
+        status:  this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null,
       }
 
-      getCampusList(params).then(res => {
-        console.log('===========resresres=========================')
-        console.log(res)
-        console.log('====================================')
+      console.log(params, 'paramsparamsparamsparamsparams');
+
+      getNormalClass(params).then(res => {
+        this.options.data = this.changeFormat(res.data.items)
+        this.options.total = res.data.total
       })
-      const arr = this.options.columnDataInfo
-      const result = []
-
-      for (let i = 0; i < 10; i++) {
-        const obj = {}
-        for (const item of arr) {
-          obj[item.value] = Math.random() * 10
-        }
-        result.push(obj)
-      }
-
-      this.options.data = result
-      this.options.total = 30
     },
 
     handleAdd() {
         this.dialogOptions.show = !this.dialogOptions.show
     },
 
-    handleSubmit(data, callback){
-        console.log(data, '111111111');
-        let cid = localStorage.getItem('cid')
-        data.F0001 = cid
-        data.F0002 = 0
-        addNormalClass(data).then(res => {
-            
-        }).catch(err => {
-            console.log(err)
-            callback()
+    handleTable(data) {
+      console.log(data, 'LLLLLLLLLLLLLLLLLLLLLLLLLLL');
+      if (data.type === 'getTable') {
+        this.getListData()
+      } else if (data.type === 'pageSizeChange') {
+        this.options.pageSize = data.pageSize
+      } else if (data.type === 'pageNumChange') {
+        this.options.pageNum = data.pageNum
+      } else if (data.type === 'multipleSelect') {
+        this.options.multipleSelect = data.data
+      } else if (data.type === '编辑') {
+        this.dialogOptions.title = "编辑课程"
+        this.dialogOptions.data = data.data
+        this.dialogOptions.show = !this.dialogOptions.show
+      } else if (data.type === '删除') {
+        deleteNormalClass(data.data.F0000).then(res => {
+          this.getListData()
         })
+      } else if (data.type === '上/下架') {
+        if(data.data.F0094 === '已上架'){
+          data.data.F0094 = '下架'
+        }else{
+          data.data.F0094 = '上架审核中'
+        }
+
+        editNormalClass(this.reverseChangeFormat(data.data)).then(res => {
+          this.getListData()
+        })
+      } 
+    },
+
+    handleSubmit(data, callback) {
+      console.log(data, 'YYYYYYYYY');
+      data.F0001 = localStorage.getItem('cid')
+      if(this.dialogOptions.title === "添加课程"){
+        addNormalClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }else{
+        editNormalClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }
+    },
+
+    handleMultipleDelete() {
+      console.log(this.options.multipleSelect, 'OOOKJJHG');
+    },
+
+    
+    changeFormat(data) {
+      let obj = parameters.PA0011
+      for(let item of data){
+        item.F0094 = obj[item.F0094]
+      }
+      return data
+    },
+
+    reverseChangeFormat(data) {
+      if(data.F0094){
+        let obj = parameters.PA0048
+        data.F0094 = obj[data.F0094]
+      }
+      return data
     }
+
 
   }
 }

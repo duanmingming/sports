@@ -211,7 +211,7 @@ export default {
     formData(val) {
       if (val) {
         this.form = val
-        this.imageUrl = this.options.img.url
+        //this.imageUrl = this.options.img.url
       } else {
         this.form = this.initFrom
       }
@@ -251,21 +251,10 @@ export default {
               for(let i=0; i<res.length; i++){
                 this.form[keyArr[i]] = res[i].data.file
               }
-              this.loading = true
-              this.$emit('handleSubmit', this.form, res => {
-                if (this.dialogVisible) {
-                  this.loading = false
-                  if (res.success) {
-                    this.$refs['form'].resetFields()
-                    this.form = this.initFrom
-                    this.file= {}
-                    this.dialogVisible = false
-                  } else {
-                    //this.$message.error(res.error)
-                  }
-                }
-              })
+              this.submit()
             })
+          }else{
+            this.submit()
           }
         } else {
           console.log('error submit!!')
@@ -280,6 +269,23 @@ export default {
         this.file[name] = file
       }
       
+    },
+
+    submit() {
+      this.loading = true
+      this.$emit('handleSubmit', this.form, res => {
+        if (this.dialogVisible) {
+          this.loading = false
+          if (res.success) {
+            this.$refs['form'].resetFields()
+            this.form = this.initFrom
+            this.file= {}
+            this.dialogVisible = false
+          } else {
+            //this.$message.error(res.error)
+          }
+        }
+      })
     }
   }
 
