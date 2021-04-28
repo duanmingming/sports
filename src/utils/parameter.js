@@ -279,6 +279,35 @@ module.exports = {
     }
   ],
   'PA0049': [
-    {value: 0, label: '草稿'}, {value: 10, label: '上架审核中'},  {value:20, label: '驳回'},  {value: 30, label: '已上架'}, {value: 40, label: '下架'}, {value: null, label: '全部'}
+    {value: null, label: '全部'},{value: 0, label: '草稿'}, {value: 10, label: '上架审核中'},  {value:20, label: '驳回'},  {value: 30, label: '已上架'}, {value: 40, label: '下架'}, 
   ],
+
+  'PA0050': [
+    {
+      label: '足球 SOCCER',
+      value: 110
+    },{
+      label: '篮球 BASKETBALL',
+      value: 120
+    },
+    {
+      label: '游泳 SWIM',
+      value: 130
+    },
+    {
+      label: '美式橄榄球 AMERICAN FOOTBALL',
+      value: 140
+    },
+    {
+      label: '棒球 BASEBALL',
+      value: 150
+    },
+    {
+      label: '高尔夫 GOLF',
+      value: 160
+    },
+    {
+      label: '体适能 MULTISPORT',
+      value: 170
+    }]
 }

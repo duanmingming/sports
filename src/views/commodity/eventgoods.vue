@@ -8,9 +8,7 @@
       <el-form :inline="true" :model="goodsQuery">
         <el-form-item label="上架状态">
           <el-select v-model="goodsQuery.status" placeholder="">
-            <el-option label="未上架" value="shanghai" />
-            <el-option label="审核中" value="beijing" />
-            <el-option label="已上架" value="shanghai1" />
+            <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value" />
           </el-select>
         </el-form-item>
         <el-form-item label="上传时间">
@@ -20,13 +18,14 @@
             range-separator="至"
             start-placeholder="开始日期"
             end-placeholder="结束日期"
+            value-format="yyyy-MM-dd"
           />
         </el-form-item>
         <el-form-item label="">
           <el-input v-model="goodsQuery.others" placeholder="请输入商品名称或其他关键词" />
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit">查询</el-button>
+          <el-button type="primary" @click="handleQuery">查询</el-button>
         </el-form-item>
       </el-form>
 
@@ -35,113 +34,25 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>普通商品列表</span>
-        <el-button style="float: right;" type="primary">批量删除</el-button>
+        <el-button style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>
-      <Table :options="options" />
+      <Table :options="options" @handleTable="handleTable" />
     </el-card>
-
-    <el-dialog
-      :title="title"
-      :visible.sync="dialogVisible"
-      width="50%"
-      :before-close="handleClose"
-      :close-on-click-modal="false"
-    >
-
-      <el-form ref="createForm" :model="createForm" :rules="rules" label-width="100px">
-        <el-form-item label="活动名称：" prop="name">
-          <el-input v-model="createForm.name" placeholder="请输入名称" />
-        </el-form-item>
-        <el-form-item label="活动图片：" prop="img">
-          <el-upload
-            class="avatar-uploader"
-            action="#"
-            :show-file-list="false"
-            :on-change="beforeAvatarUpload"
-            :auto-upload="false"
-          >
-            <img v-if="imageUrl" :src="imageUrl" class="avatar">
-            <i v-else class="el-icon-plus avatar-uploader-icon" />
-          </el-upload>
-        </el-form-item>
-        <el-form-item label="年龄要求：" prop="color">
-          <el-input v-model="createForm.color" placeholder="请输入商品颜色" />
-        </el-form-item>
-        <el-form-item label="主办方：" prop="size">
-          <el-input v-model="createForm.size" placeholder="请输入商品尺码" />
-        </el-form-item>
-
-        <el-form-item label="举办时间：" prop="weight">
-          <el-input v-model="createForm.weight" placeholder="请输入商品重量" />
-        </el-form-item>
-        <el-form-item label="地点：" prop="unitPrice">
-          <el-input v-model="createForm.unitPrice" placeholder="请输入商品单价" />
-        </el-form-item>
-        <el-form-item label="保证金：" prop="introduction">
-          <el-input v-model="createForm.introduction" type="textarea" :rows="3" placeholder="请输入商品简介" />
-        </el-form-item>
-        <el-form-item label="报名费：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
-        </el-form-item>
-        <el-form-item label="保险：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
-        </el-form-item>
-        <el-form-item label="联系人：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
-        </el-form-item>
-        <el-form-item label="联系电话：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
-        </el-form-item>
-        <el-form-item label="微信号：" prop="discountedPrice">
-          <el-input v-model="createForm.discountedPrice" placeholder="请输入商品优惠价格" />
-        </el-form-item>
-        <el-form-item label="活动状态：" prop="status">
-          <el-switch
-            v-model="createForm.status"
-            style="display: block;marginTop: 6px;"
-            active-color="#13ce66"
-            inactive-color="#ff4949"
-            active-text="上架"
-            inactive-text="下架"
-          />
-        </el-form-item>
-        <el-form-item label="上架有效期：" prop="maker">
-          <el-input v-model="createForm.maker" placeholder="请输入商品制造商" />
-        </el-form-item>
-
-      </el-form>
-
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="handleClose">取 消</el-button>
-        <el-button type="primary" @click="handleSubmit">提 交</el-button>
-      </span>
-    </el-dialog>
+    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
   </div>
 </template>
 
 <script>
 import Table from '@/components/Table/index'
-import { getCampusList } from '@/api/campus'
+import Dialog from '@/components/Dialog/index'
+import { addEventClass as addClass, getEventlClass as getClass, editEventClass as editClass, deleteEventClass as deleteClass } from '@/api/commodity'
+import parameters from '@/utils/parameter'
 
 export default {
   name: 'Event',
-  components: { Table },
+  components: { Table, Dialog },
   data() {
-    const checkEmail = (rule, value, callback) => {
-      if (value) {
-        const reg = /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/
-        const flag = reg.test(value)
-        if (flag) {
-          return callback()
-        } else {
-          return callback(new Error('请填写正确的邮箱格式'))
-        }
-      } else {
-        return callback()
-      }
-    }
-
     const checkTel = (rule, value, callback) => {
       if (value) {
         const reg = /^1(3|4|5|6|7|8|9)\d{9}$/
@@ -156,7 +67,31 @@ export default {
       }
     }
 
+    const checkNum = (rule, value, callback) => {
+      if (value) {
+        const reg = /\D/
+        const flag = (value + '').match(reg)
+        if (flag) {
+          return callback(new Error('请只输入数字'))
+        } else {
+          return callback()
+        }
+      } else {
+        return callback()
+      }
+    }
+
     return {
+      goodsQuery: {
+        status: '',
+        time: '',
+        others: ''
+      },
+
+      historyQuery: {
+
+      },
+
       options: {
         data: [],
         border: false,
@@ -165,36 +100,36 @@ export default {
         columnDataInfo: [
           {
             name: '编号',
-            value: 'number',
+            value: 'F0000',
             width: '15%'
           },
           {
-            name: '活动名称',
-            value: 'userName',
+            name: '名称',
+            value: 'F0003',
             width: '15%'
           }, {
             name: '状态',
-            value: 'tel',
+            value: 'F0094',
             width: '10%'
           }, {
             name: '举办时间',
-            value: 'className',
+            value: 'F0013',
             width: '30%'
           }, {
             name: '地点',
-            value: 'amount',
+            value: 'F0007',
             width: '10%'
           }, {
             name: '主办方',
-            value: 'status',
+            value: 'F0015',
             width: '10%'
           }, {
             name: '联系人',
-            value: 'time',
+            value: 'F0017',
             width: '10%'
           }, {
             name: '上传时间',
-            value: 'time',
+            value: 'F0091',
             width: '10%'
           }
         ],
@@ -215,165 +150,102 @@ export default {
         pageNum: 1,
         pageSize: 10,
         pageSizes: [10, 20, 30],
-        multiple: true
+        multiple: true,
+        multipleSelect: []
       },
-      goodsQuery: {
-        status: '',
-        time: '',
-        others: ''
-      },
-      title: '添加校区',
-      dialogVisible: false,
-      createForm: {
-        name: null,
-        color: null,
-        size: null,
-        img: null,
-        weight: null,
-        unitPrice: null,
-        discountedPrice: null,
-        introduction: null,
-        maker: null,
-        status: null
-      },
-      rules: {
-        name: [
-          { required: true, message: '请输入名称', trigger: 'blur' }
-        ],
-        unitPrice: [
-          { required: true, message: '请输入单价', trigger: 'blur' }
-        ],
-        introduction: [
-          { required: true, message: '请输入商品简介', trigger: 'blur' }
+
+      dialogOptions: {
+        title: "添加课程",
+        labelWidth: "130px",
+        labelPosition: "left",
+        show:false,
+        data: null,
+        settings: [
+          {
+            type: 'input',
+            label: '活动名称',
+            rules: [
+                { required: true, message: '请输入名称', trigger: 'blur'},
+                { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
+                ],
+            name:'F0003'
+          },
+          {
+            type: 'img',
+            label:'上传图片',
+            name:'F0012'
+          },
+          {
+            type: 'input',
+            label: '年龄要求',
+            rules: [{ validator: checkNum, trigger: 'blur' }],
+            name: 'F0005'
+          },
+          {
+            type: 'input',
+            label: '主办方',
+            name: 'F0015'
+          },
+          {
+            type: 'date',
+            label: '举办时间',
+            name: 'F0013'
+          },
+          {
+            type: 'input',
+            label: '地点',
+            name: 'F0007'
+          },
+          {
+            type: 'text',
+            label: '活动简介',
+            name: 'F0011',
+            roew:3
+          },
+          {
+            type: 'input',
+            label: '保证金',
+            rules: [{ validator: checkNum, trigger: 'blur' }],
+            name: 'F0008'
+          },
+          {
+            type: 'input',
+            label: '报名费',
+            rules: [{ validator: checkNum, trigger: 'blur' }],
+            name: 'F0009'
+          },
+          {
+            type: 'input',
+            label: '保险',
+            rules: [{ validator: checkNum, trigger: 'blur' }],
+            name: 'F0010'
+          },
+          {
+            type: 'input',
+            label: '联系人',
+            name: 'F0017'
+          },
+          {
+            type: 'input',
+            label: '联系电话',
+            rules: [{ validator: checkTel, trigger: 'blur' }],
+            name: 'F0018'
+          },
+          {
+            type: 'input',
+            label: '微信号',
+            name: 'F0019'
+          },
+          {
+            type: 'input',
+            label: '上架有效期',
+            rules: [{ validator: checkNum, trigger: 'blur' }],
+            name: 'F0020'
+          },
         ]
       },
 
-      editFlag: false,
-
-      imageUrl: '',
-
-      goodsTree: [
-        {
-          label: '上海校区',
-          value: 10000,
-          children: [
-            {
-              label: '静安校区',
-              value: 10001,
-              children: [
-                {
-                  label: '静安训练中心',
-                  value: 10002
-                }
-              ]
-            },
-            {
-              label: '闵行校区',
-              value: 10003,
-              children: [{
-                label: '闵行训练中心',
-                value: 10004
-              }]
-            }
-          ]
-        },
-        {
-          label: '北京校区',
-          value: 10005,
-          children: [{
-            label: '北京嘉里中心',
-            value: 10006
-          }
-          ]
-        },
-        {
-          label: '贵州省校区',
-          value: 10007,
-          children: [{
-            label: '贵阳市校区',
-            value: 10008,
-            children: [
-              {
-                label: '贵州训练中心',
-                value: 10009
-              }
-            ]
-          }]
-        },
-        {
-          label: '香港校区',
-          value: 10010,
-          children: [{
-            label: '香港训练中心',
-            value: 10011
-          }]
-        },
-        {
-          label: '测试校区（省)',
-          value: 90000,
-          children: [
-            {
-              label: '测试省属培训中心1',
-              value: 90001
-            },
-            {
-              label: '测试校区（市）',
-              value: 90002,
-              children: [
-                {
-                  label: '测试市属培训中心1',
-                  value: 90003
-                },
-                {
-                  label: '测试校区1（县)',
-                  value: 90004,
-                  children: [
-                    {
-                      label: '测试培训中心11',
-                      value: 90005
-                    },
-                    {
-                      label: '测试培训中心12',
-                      value: 90006
-                    }
-                  ]
-                },
-                {
-                  label: '测试校区2（县)',
-                  value: 90007,
-                  children: [{
-                    label: '测试培训中心21',
-                    value: 90008
-                  },
-                  {
-                    label: '测试培训中心22',
-                    value: 90009
-                  }
-                  ]
-                }
-              ]
-            }
-          ]
-        },
-        {
-          label: '测试总部直营校区',
-          value: 90010,
-          children: [
-            {
-              label: '测试直营校区1',
-              value: 90011
-            },
-            {
-              label: '测试直营校区2',
-              value: 90012
-            }
-          ]
-        }
-      ],
-      defaultProps: {
-        children: 'children',
-        label: 'label'
-      }
+      statusOptions: parameters.PA0049
     }
   },
 
@@ -382,77 +254,128 @@ export default {
   },
 
   methods: {
-    onSubmit() {
-      console.log('submit!')
+    handleQuery() {
+      let {status, time, others} = this.goodsQuery
+      this.historyQuery = 
+      {
+        status,time,others
+      }
+      this.getListData()
     },
 
     getListData() {
       const params = {
-        cid: 1
+        cid: localStorage.getItem('cid'),
+        pageNum: this.options.pageNum,
+        pageSize: this.options.pageSize,
+        name: this.historyQuery.hasOwnProperty('others') ? this.historyQuery.others : "",
+        time:  this.historyQuery.hasOwnProperty('time') ? this.historyQuery.time : null,
+        status:  this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null,
       }
 
-      getCampusList(params).then(res => {
-        console.log('===========resresres=========================')
-        console.log(res)
-        console.log('====================================')
+      getClass(params).then(res => {
+        this.options.data = this.changeFormat(res.data.items)
+        this.options.total = res.data.total
       })
-      const arr = this.options.columnDataInfo
-      const result = []
-
-      for (let i = 0; i < 10; i++) {
-        const obj = {}
-        for (const item of arr) {
-          obj[item.value] = Math.random() * 10
-        }
-        result.push(obj)
-      }
-
-      this.options.data = result
-      this.options.total = 30
-    },
-
-    handleClose() {
-      this.dialogVisible = false
-      // this.editFlag = false
-      // this.$refs['createForm'].resetFields()
-      // this.resetTree = !this.resetTree
-      // this.defaultText = ''
-      this.createForm = {
-        userName: null,
-        showName: null,
-        organization: null,
-        email: null,
-        tel: null,
-        expireTime: null,
-        remark: null,
-        id: null,
-        jobNo: null
-      }
-    },
-
-    handleSubmit() {
-
     },
 
     handleAdd() {
-      this.dialogVisible = true
+      this.dialogOptions.data = null
+      this.dialogOptions.title = "添加课程"
+      this.dialogOptions.show = !this.dialogOptions.show
+        
     },
 
-    beforeAvatarUpload(file) {
-      console.log('==========filefilefilefile==========================')
-      console.log(file)
-      console.log('====================================')
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-      this.imageUrl = URL.createObjectURL(file.raw)
-      // if (!isJPG) {
-      //   this.$message.error('上传头像图片只能是 JPG 格式!');
-      // }
-      // if (!isLt2M) {
-      //   this.$message.error('上传头像图片大小不能超过 2MB!');
-      // }
-      return isJPG && isLt2M
+    handleTable(data) {
+      if (data.type === 'getTable') {
+        this.getListData()
+      } else if (data.type === 'pageSizeChange') {
+        this.options.pageSize = data.pageSize
+      } else if (data.type === 'pageNumChange') {
+        this.options.pageNum = data.pageNum
+      } else if (data.type === 'multipleSelect') {
+        this.options.multipleSelect = data.data
+      } else if (data.type === '编辑') {
+        this.dialogOptions.title = "编辑课程"
+        this.dialogOptions.data = data.data
+        this.dialogOptions.show = !this.dialogOptions.show
+      } else if (data.type === '删除') {
+        this.$confirm('此操作将永久删除该课程, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           deleteClass(data.data.F0000).then(res => {
+             this.getListData()
+             this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          })
+         
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+       
+      } else if (data.type === '上/下架') {
+        if(data.data.F0094 === '已上架'){
+          data.data.F0094 = '下架'
+        }else{
+          data.data.F0094 = '上架审核中'
+        }
+
+        editClass(this.reverseChangeFormat(data.data)).then(res => {
+          this.getListData()
+        })
+      } 
+    },
+
+    handleSubmit(data, callback) {
+      data.F0001 = localStorage.getItem('cid')
+      if(this.dialogOptions.title === "添加课程"){
+        addClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }else{
+        editClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.dialogOptions.title = "添加课程"
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+          this.dialogOptions.title = "添加课程"
+        })
+      }
+    },
+
+    handleMultipleDelete() {
+      console.log(this.options.multipleSelect, 'OOOKJJHG');
+    },
+
+    
+    changeFormat(data) {
+      let obj = parameters.PA0011
+      for(let item of data){
+        item.F0094 = obj[item.F0094]
+      }
+      return data
+    },
+
+    reverseChangeFormat(data) {
+      if(data.F0094){
+        let obj = parameters.PA0048
+        data.F0094 = obj[data.F0094]
+      }
+      return data
     }
+
+
   }
 }
 </script>

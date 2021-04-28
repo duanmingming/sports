@@ -3,7 +3,7 @@
     <el-dialog
       :title="options.title"
       :visible.sync="dialogVisible"
-      width="30%"
+      width="60%"
       :modal-append-to-body="false"
       :before-close="handleClose"
     >
@@ -65,7 +65,7 @@
 
             <template v-else-if="item.type === 'radio'">
               <el-radio-group v-model="form[item.name]">
-                <el-radio v-for="radioOption in item.options" :key="radioOption.label" :label="radioOption.label">{{ radioOption.value }}</el-radio>
+                <el-radio v-for="radioOption in item.options" :key="radioOption.value" :label="radioOption.value">{{ radioOption.label }}</el-radio>
               </el-radio-group>
             </template>
 
@@ -206,15 +206,17 @@ export default {
   watch: {
     show(val) {
       this.dialogVisible = true
-    },
-
-    formData(val) {
-      if (val) {
-        this.form = val
+      if (this.formData) {
+        this.form = this.formData
         //this.imageUrl = this.options.img.url
       } else {
         this.form = this.initFrom
       }
+    },
+
+    formData(val) {
+      console.log(val, 'OOOPPPPPPPPOLIHGFRGHH')
+      
     }
   },
 

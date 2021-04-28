@@ -101,7 +101,7 @@ export default {
         columnDataInfo: [
           {
             name: '编号',
-            value: 'F0002',
+            value: 'F0000',
             width: '15%'
           },
           {
@@ -262,7 +262,10 @@ export default {
     },
 
     handleAdd() {
-        this.dialogOptions.show = !this.dialogOptions.show
+      this.dialogOptions.data = null
+      this.dialogOptions.title = "添加课程"
+      this.dialogOptions.show = !this.dialogOptions.show
+        
     },
 
     handleTable(data) {
@@ -280,9 +283,26 @@ export default {
         this.dialogOptions.data = data.data
         this.dialogOptions.show = !this.dialogOptions.show
       } else if (data.type === '删除') {
-        deleteNormalClass(data.data.F0000).then(res => {
-          this.getListData()
-        })
+        this.$confirm('此操作将永久删除该课程, 是否继续?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+           deleteNormalClass(data.data.F0000).then(res => {
+             this.getListData()
+             this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          })
+         
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });          
+        });
+       
       } else if (data.type === '上/下架') {
         if(data.data.F0094 === '已上架'){
           data.data.F0094 = '下架'
@@ -309,9 +329,11 @@ export default {
       }else{
         editNormalClass(this.reverseChangeFormat(data)).then(res => {
           callback({success:true})
+          this.dialogOptions.title = "添加课程"
           this.getListData()
         }).catch(err => {
           callback({success:false})
+          this.dialogOptions.title = "添加课程"
         })
       }
     },
