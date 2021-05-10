@@ -39,7 +39,7 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>校区列表</span>
-        <el-button style="float: right;" type="primary">批量导出</el-button>
+        <el-button style="float: right;" type="primary" @click="handleRole">批量导出</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加校区</el-button>
       </div>
       <Table :options="options" @handleTable="handleTable" />
@@ -555,6 +555,19 @@ export default {
         this.createForm = data.data
         this.imageUrl = data.data.F0033
         this.dialogVisible = true
+      }
+    },
+
+    handleRole() {
+      let role = localStorage.getItem('role')
+      if(role){
+        if(parseInt(role) === 0){
+          localStorage.setItem('role', 1)
+        }else{
+          localStorage.setItem('role', 0)
+        }
+      }else{
+        localStorage.setItem('role', 0)
       }
     }
   }

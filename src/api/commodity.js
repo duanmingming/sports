@@ -162,6 +162,18 @@ export function deleteShortClass(id) {
   })
 }
 
+export function checkClass(data) {
+  return request({
+    url: '/api/private/v1/goodsstatus',
+    method: 'put',
+    data
+  })
+}
+
+
+
+
+
 
 
 

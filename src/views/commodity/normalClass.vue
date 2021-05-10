@@ -33,13 +33,14 @@
 
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
-        <span>普通商品列表</span>
+        <span>基础课程列表</span>
         <el-button style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>
       <Table :options="options" @handleTable="handleTable" />
     </el-card>
-    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
+    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit">
+    </Dialog>
   </div>
 </template>
 
@@ -153,6 +154,7 @@ export default {
 
       dialogOptions: {
         title: "添加课程",
+        check: true,
         labelWidth: "130px",
         labelPosition: "left",
         show:false,
@@ -402,6 +404,11 @@ export default {
     height: 160px;
     border: 1px dashed #d9d9d9;
     overflow: scroll;
+  }
+
+  .textForm {
+    width: 130px;
+    display: inline-block;
   }
 
 </style>

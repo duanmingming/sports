@@ -34,8 +34,8 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>普通商品列表</span>
-        <el-button style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
-        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
+        <el-button v-if="!dialogOptions.check" style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
+        <el-button v-if="!dialogOptions.check" style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>
       <Table :options="options" @handleTable="handleTable" />
     </el-card>
@@ -46,7 +46,7 @@
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { addGeneralClass as addClass, getGeneralClass as getClass, editGeneralClass as editClass, deleteGeneralClass as deleteClass } from '@/api/commodity'
+import { addGeneralClass as addClass, getGeneralClass as getClass, editGeneralClass as editClass, deleteGeneralClass as deleteClass, checkClass } from '@/api/commodity'
 import parameters from '@/utils/parameter'
 
 export default {
@@ -158,6 +158,7 @@ export default {
         title: "添加课程",
         labelWidth: "130px",
         labelPosition: "left",
+        check: false,
         show:false,
         data: null,
         settings: [
@@ -221,6 +222,26 @@ export default {
     }
   },
 
+  created() {
+    let role = parseInt(localStorage.getItem('role'))
+    if(role === 1){
+      for(let item of this.dialogOptions.settings){
+        item.disabled = true
+      }
+
+      this.dialogOptions.check = true
+
+      this.options.columnOpreationInfo = [
+        {
+          name: '审核',
+          style: ''
+        }
+      ]
+
+    }
+    
+  },
+
   mounted() {
     this.getListData()
   },
@@ -267,6 +288,10 @@ export default {
         this.options.pageNum = data.pageNum
       } else if (data.type === 'multipleSelect') {
         this.options.multipleSelect = data.data
+      }  else if (data.type === '审核') {
+        this.dialogOptions.title = "审核课程"
+        this.dialogOptions.data = data.data
+        this.dialogOptions.show = !this.dialogOptions.show
       } else if (data.type === '编辑') {
         this.dialogOptions.title = "编辑课程"
         this.dialogOptions.data = data.data
@@ -309,6 +334,22 @@ export default {
       data.F0001 = localStorage.getItem('cid')
       if(this.dialogOptions.title === "添加课程"){
         addClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }else if(this.dialogOptions.title === "审核课程"){
+        console.log(data, 'PPPPPP');
+        let params = {
+          cid: localStorage.getItem('cid'),
+          type: 140,
+          F0000: data.F0000,
+          F0094: data.checkStatus,
+          F0095: data.checkNote,
+          F0001: 1
+        }
+        checkClass(params).then(res => {
           callback({success:true})
           this.getListData()
         }).catch(err => {

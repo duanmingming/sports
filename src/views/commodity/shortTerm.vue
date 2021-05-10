@@ -33,7 +33,7 @@
 
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
-        <span>普通商品列表</span>
+        <span>短期运营商品列表</span>
         <el-button style="float: right;" type="primary" @click="handleMultipleDelete">批量删除</el-button>
         <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加商品</el-button>
       </div>

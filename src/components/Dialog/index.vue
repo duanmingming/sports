@@ -76,6 +76,7 @@
                 :show-file-list="false"
                 :on-change="(file, fileArr) => beforeAvatarUpload(file, fileArr, item.name)"
                 :auto-upload="false"
+                :disabled="item.disabled ? item.disabled : false"
               >
                 <img v-if="form[item.name]" :src="form[item.name]" class="avatar">
                 <i v-else class="el-icon-plus avatar-uploader-icon" />
@@ -88,6 +89,20 @@
 
           </el-form-item>
         </template>
+
+        <template v-if="options.check">
+          <el-form-item label="审核结果">
+            <el-radio-group v-model="form.checkStatus">
+              <el-radio label="20">同意</el-radio>
+              <el-radio label="30">驳回</el-radio>
+            </el-radio-group>
+          </el-form-item>
+          <el-form-item label="审核意见">
+            <el-input type="textarea" v-model="form.checkNote"></el-input>
+          </el-form-item>
+        </template>
+
+
       </el-form>
 
       <span slot="footer" class="dialog-footer">
@@ -231,7 +246,7 @@ export default {
 
   methods: {
     handleClose() {
-      this.$refs['form'].resetFields()
+      //this.$refs['form'].resetFields()
       this.form = this.initFrom
       this.file= {}
       this.loading = false
