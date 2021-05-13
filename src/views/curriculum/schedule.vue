@@ -82,27 +82,27 @@ export default {
         columnDataInfo: [
           {
             name: '编号',
-            value: 'number',
+            value: 'F0009',
             width: '15%'
           },
           {
-            name: '名称',
-            value: 'userName',
+            name: '课程名称',
+            value: 'F0011',
             width: '15%'
           }, {
             name: '状态',
             value: 'tel',
             width: '10%'
           }, {
-            name: '颜色',
-            value: 'className',
+            name: '课时',
+            value: 'F0014',
             width: '30%'
           }, {
             name: '价格',
             value: 'amount',
             width: '10%'
           }, {
-            name: '尺码',
+            name: '销量',
             value: 'status',
             width: '10%'
           }, {
@@ -117,16 +117,8 @@ export default {
         ],
         columnOpreationInfo: [
           {
-            name: '编辑',
+            name: '排课',
             style: ''
-          },
-          {
-            name: '上/下架',
-            style: ''
-          },
-          {
-            name: '删除',
-            style: 'color:red'
           }
         ],
         pageNum: 1,

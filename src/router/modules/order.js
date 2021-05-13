@@ -21,20 +21,24 @@ const orderRouter = {
   },
   children: [
     {
-      path: 'class',
+      path: 'goods',
       component: () => import('@/views/order/management'),
       name: 'Class',
-      meta: { title: '课程订单', noCache: true }
+      meta: { title: '订单商品查询', noCache: true }
     },
     {
-      path: 'managementEdit',
+      path: 'query',
       component: () => import('@/views/order/management'),
-      name: 'managementEdit',
-      meta: {
-        title: 'Order managementEdit',
-        noCache: true
-      }
+      name: 'Class',
+      meta: { title: '订单查询', noCache: true }
+    },
+    {
+      path: 'status',
+      component: () => import('@/views/order/management'),
+      name: 'Class',
+      meta: { title: '订单状态管理', noCache: true }
     }
+    
   ]
 }
 

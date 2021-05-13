@@ -174,12 +174,14 @@ export default {
           {
             type: 'input',
             label: '颜色',
-            name:'F0005'
+            name:'F0005',
+            width: 12
           },
           {
             type: 'input',
             label: '尺码',
             rules: [{ validator: checkNum, trigger: 'blur' }],
+            width: 12,
             name:'F0006'
           },
           {
@@ -195,12 +197,14 @@ export default {
           {
             type: 'input',
             label: '商品单价',
+            width: 12,
             rules: [{ validator: checkNum, trigger: 'blur' },  { required: true, message: '请商品单价', trigger: 'blur'}],
             name: 'F0013'
           },
           {
             type: 'input',
             label: '优惠价格',
+            width: 12,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0019'
           },
@@ -231,6 +235,8 @@ export default {
 
       this.dialogOptions.check = true
 
+      this.statusOptions = parameters.PA0051
+
       this.options.columnOpreationInfo = [
         {
           name: '审核',
@@ -257,13 +263,14 @@ export default {
     },
 
     getListData() {
+      let role = parseInt(localStorage.getItem('role'))
       const params = {
         cid: localStorage.getItem('cid'),
         pageNum: this.options.pageNum,
         pageSize: this.options.pageSize,
         name: this.historyQuery.hasOwnProperty('others') ? this.historyQuery.others : "",
         time:  this.historyQuery.hasOwnProperty('time') ? this.historyQuery.time : null,
-        status:  this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null,
+        status:  role === 1 ? 10 : (this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null),
       }
 
       getClass(params).then(res => {

@@ -8,99 +8,104 @@
       :before-close="handleClose"
     >
 
-      <el-form ref="form" :model="form" :label-width="options.labelWidth" :label-position="options.labelPosition" :style="options.style">
+      <el-form ref="form" :model="form"  :label-width="options.labelWidth" :label-position="'right'" :style="options.style">
+        <el-row>
         <template v-for="item in options.settings">
-          <el-form-item :key="item.name" :label="item.label" :prop="item.name" :rules="item.rules ? item.rules : []">
+          <el-col :key="item.name" :span="item.width ? item.width : 24">
+            <el-form-item  :label="item.label" :prop="item.name" :rules="item.rules ? item.rules : []">
 
-            <template v-if="item.type === 'text'">
-              <el-input v-model="form[item.name]" type="textarea" :rows="item.rows ? item.rows : 3" :disabled="item.disabled ? item.disabled : false" />
-            </template>
+              <template v-if="item.type === 'text'">
+                <el-input v-model="form[item.name]" type="textarea" :rows="item.rows ? item.rows : 3" :disabled="item.disabled ? item.disabled : false" />
+              </template>
 
-            <template v-else-if="item.type === 'select'">
-              <el-select
-                v-model="form[item.name]"
-                placeholder="请选择"
-                :disabled="item.disabled ? item.disabled : false"
-                style="width:100%"
-              >
-                <el-option
-                  v-for="selectOption in item.options"
-                  :key="selectOption.label"
-                  :label="selectOption.label"
-                  :value="selectOption.value"
+              <template v-else-if="item.type === 'select'">
+                <el-select
+                  v-model="form[item.name]"
+                  placeholder="请选择"
+                  :disabled="item.disabled ? item.disabled : false"
+                  style="width:100%"
+                >
+                  <el-option
+                    v-for="selectOption in item.options"
+                    :key="selectOption.label"
+                    :label="selectOption.label"
+                    :value="selectOption.value"
+                  />
+                </el-select>
+              </template>
+
+              <template v-else-if="item.type === 'cascader'">
+                <el-cascader
+                  v-model="form[item.name]"
+                  :options="item.options"
+                  :props="item.props"
+                  :disabled="item.disabled ? item.disabled : false"
                 />
-              </el-select>
-            </template>
+              </template>
 
-            <template v-else-if="item.type === 'cascader'">
-              <el-cascader
-                v-model="form[item.name]"
-                :options="item.options"
-                :props="item.props"
-                :disabled="item.disabled ? item.disabled : false"
-              />
-            </template>
+              <template v-else-if="item.type === 'switch'">
+                <el-switch
+                  v-model="form[item.name]"
+                  active-color="#13ce66"
+                  inactive-color="#ff4949"
+                  :active-text="item.activeText"
+                  :inactive-text="item.inactivetext"
+                  :disabled="item.disabled ? item.disabled : false"
+                />
+              </template>
 
-            <template v-else-if="item.type === 'switch'">
-              <el-switch
-                v-model="form[item.name]"
-                active-color="#13ce66"
-                inactive-color="#ff4949"
-                :active-text="item.activeText"
-                :inactive-text="item.inactivetext"
-                :disabled="item.disabled ? item.disabled : false"
-              />
-            </template>
+              <template v-else-if="item.type === 'date'">
+                <el-date-picker
+                  v-model="form[item.name]"
+                  type="date"
+                  :disabled-date="item.disabled ? item.disabled : false"
+                  placeholder="选择日期"
+                  style="width:100%"
+                  value-format="yyyy-MM-dd"
+                />
+              </template>
 
-            <template v-else-if="item.type === 'date'">
-              <el-date-picker
-                v-model="form[item.name]"
-                type="date"
-                :disabled-date="item.disabled ? item.disabled : false"
-                placeholder="选择日期"
-                style="width:100%"
-                value-format="yyyy-MM-dd"
-              />
-            </template>
+              <template v-else-if="item.type === 'radio'">
+                <el-radio-group v-model="form[item.name]">
+                  <el-radio v-for="radioOption in item.options" :key="radioOption.value" :label="radioOption.value">{{ radioOption.label }}</el-radio>
+                </el-radio-group>
+              </template>
 
-            <template v-else-if="item.type === 'radio'">
-              <el-radio-group v-model="form[item.name]">
-                <el-radio v-for="radioOption in item.options" :key="radioOption.value" :label="radioOption.value">{{ radioOption.label }}</el-radio>
-              </el-radio-group>
-            </template>
+              <template v-else-if="item.type === 'img'">
+                <el-upload
+                  class="avatar-uploader"
+                  action="#"
+                  :show-file-list="false"
+                  :on-change="(file, fileArr) => beforeAvatarUpload(file, fileArr, item.name)"
+                  :auto-upload="false"
+                  :disabled="item.disabled ? item.disabled : false"
+                >
+                  <img v-if="form[item.name]" :src="form[item.name]" class="avatar">
+                  <i v-else class="el-icon-plus avatar-uploader-icon" />
+                </el-upload>
+              </template>
 
-            <template v-else-if="item.type === 'img'">
-              <el-upload
-                class="avatar-uploader"
-                action="#"
-                :show-file-list="false"
-                :on-change="(file, fileArr) => beforeAvatarUpload(file, fileArr, item.name)"
-                :auto-upload="false"
-                :disabled="item.disabled ? item.disabled : false"
-              >
-                <img v-if="form[item.name]" :src="form[item.name]" class="avatar">
-                <i v-else class="el-icon-plus avatar-uploader-icon" />
-              </el-upload>
-            </template>
+              <template v-else>
+                <el-input v-model="form[item.name]" :disabled="item.disabled ? item.disabled : false" />
+              </template>
 
-            <template v-else>
-              <el-input v-model="form[item.name]" :disabled="item.disabled ? item.disabled : false" />
-            </template>
-
-          </el-form-item>
+            </el-form-item>
+          </el-col>
         </template>
 
         <template v-if="options.check">
           <el-form-item label="审核结果">
             <el-radio-group v-model="form.checkStatus">
-              <el-radio label="20">同意</el-radio>
-              <el-radio label="30">驳回</el-radio>
+              <el-radio label="30">同意</el-radio>
+              <el-radio label="20">驳回</el-radio>
             </el-radio-group>
           </el-form-item>
           <el-form-item label="审核意见">
             <el-input type="textarea" v-model="form.checkNote"></el-input>
           </el-form-item>
         </template>
+
+      </el-row>
 
 
       </el-form>

@@ -282,6 +282,10 @@ module.exports = {
     {value: null, label: '全部'},{value: 0, label: '草稿'}, {value: 10, label: '上架审核中'},  {value:20, label: '驳回'},  {value: 30, label: '已上架'}, {value: 40, label: '下架'}, 
   ],
 
+  'PA0051': [
+    {value: 10, label: '上架审核中'}
+  ],
+
   'PA0050': [
     {
       label: '足球 SOCCER',

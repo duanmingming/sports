@@ -46,7 +46,7 @@
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { addMatchClass as addClass, getMatchlClass as getClass, editMatchClass as editClass, deleteMatchClass as deleteClass } from '@/api/commodity'
+import { addMatchClass as addClass, getMatchlClass as getClass, editMatchClass as editClass, deleteMatchClass as deleteClass, checkClass } from '@/api/commodity'
 import parameters from '@/utils/parameter'
 
 export default {
@@ -178,12 +178,14 @@ export default {
           {
             type: 'input',
             label: '年龄要求',
+            width: 8,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0005'
           },
           {
               type: 'radio',
               label: '报名类别',
+              width: 8,
               name: 'F0006',
               options: [{
                 value:0,
@@ -195,27 +197,32 @@ export default {
           },{
             type: 'input',
             label: '球队人数',
+            width: 8,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0021'
           },
           {
             type: 'input',
             label: '主办方',
+            width: 12,
             name: 'F0015'
           },
           {
             type: 'input',
             label: '承办方',
+            width: 12,
             name: 'F0016'
           },
           {
             type: 'date',
             label: '举办时间',
+            width: 12,
             name: 'F0013'
           },
           {
             type: 'input',
             label: '地点',
+            width: 12,
             name: 'F0007'
           },
           {
@@ -227,35 +234,41 @@ export default {
           {
             type: 'input',
             label: '保证金',
+            width: 8,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0008'
           },
           {
             type: 'input',
             label: '报名费',
+            width: 8,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0009'
           },
           {
             type: 'input',
             label: '保险',
+            width: 8,
             rules: [{ validator: checkNum, trigger: 'blur' }],
             name: 'F0010'
           },
           {
             type: 'input',
             label: '联系人',
+            width: 8,
             name: 'F0017'
           },
           {
             type: 'input',
             label: '联系电话',
+            width: 8,
             rules: [{ validator: checkTel, trigger: 'blur' }],
             name: 'F0018'
           },
           {
             type: 'input',
             label: '微信号',
+            width: 8,
             name: 'F0019'
           },
           {
@@ -269,6 +282,28 @@ export default {
 
       statusOptions: parameters.PA0049
     }
+  },
+
+  created() {
+    let role = parseInt(localStorage.getItem('role'))
+    if(role === 1){
+      for(let item of this.dialogOptions.settings){
+        item.disabled = true
+      }
+
+      this.dialogOptions.check = true
+
+      this.statusOptions = parameters.PA0051
+
+      this.options.columnOpreationInfo = [
+        {
+          name: '审核',
+          style: ''
+        }
+      ]
+
+    }
+    
   },
 
   mounted() {
@@ -286,13 +321,14 @@ export default {
     },
 
     getListData() {
+      let role = parseInt(localStorage.getItem('role'))
       const params = {
         cid: localStorage.getItem('cid'),
         pageNum: this.options.pageNum,
         pageSize: this.options.pageSize,
         name: this.historyQuery.hasOwnProperty('others') ? this.historyQuery.others : "",
         time:  this.historyQuery.hasOwnProperty('time') ? this.historyQuery.time : null,
-        status:  this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null,
+        status:  role === 1 ? 10 : (this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null),
       }
 
       getClass(params).then(res => {
@@ -317,7 +353,11 @@ export default {
         this.options.pageNum = data.pageNum
       } else if (data.type === 'multipleSelect') {
         this.options.multipleSelect = data.data
-      } else if (data.type === '编辑') {
+      } else if (data.type === '审核') {
+        this.dialogOptions.title = "审核课程"
+        this.dialogOptions.data = data.data
+        this.dialogOptions.show = !this.dialogOptions.show
+      }else if (data.type === '编辑') {
         this.dialogOptions.title = "编辑课程"
         this.dialogOptions.data = data.data
         this.dialogOptions.show = !this.dialogOptions.show
@@ -359,6 +399,22 @@ export default {
       data.F0001 = localStorage.getItem('cid')
       if(this.dialogOptions.title === "添加课程"){
         addClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }else if(this.dialogOptions.title === "审核课程"){
+        console.log(data, 'PPPPPP');
+        let params = {
+          cid: localStorage.getItem('cid'),
+          type: 140,
+          F0000: data.F0000,
+          F0094: data.checkStatus,
+          F0095: data.checkNote,
+          F0001: 1
+        }
+        checkClass(params).then(res => {
           callback({success:true})
           this.getListData()
         }).catch(err => {

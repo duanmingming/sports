@@ -50,6 +50,7 @@
 
 <script>
 import Table from '@/components/Table/index'
+import { getQueryList } from '@/api/order'
 
 export default {
   name: 'Management',
@@ -64,32 +65,36 @@ export default {
         columnDataInfo: [
           {
             name: '订单编号',
-            value: 'orderNo',
+            value: 'F0002',
             width: '15%'
           },
           {
-            name: '用户昵称',
-            value: 'userName',
+            name: '用户',
+            value: 'F0003',
             width: '15%'
           }, {
             name: '手机号',
-            value: 'tel',
+            value: 'F0028',
             width: '10%'
           }, {
-            name: '课程名称',
-            value: 'className',
+            name: '会员姓名',
+            value: 'F0022',
             width: '30%'
           }, {
+            name: '商品名称',
+            value: 'F0011',
+            width: '10%'
+          }, {
             name: '订单金额',
-            value: 'amount',
+            value: 'F0014',
             width: '10%'
           }, {
             name: '订单状态',
-            value: 'status',
+            value: 'F0007',
             width: '10%'
           }, {
             name: '提交时间',
-            value: 'time',
+            value: 'F0032',
             width: '10%'
           }
         ],
@@ -97,10 +102,6 @@ export default {
           {
             name: '查看',
             style: ''
-          },
-          {
-            name: '删除',
-            style: 'color:red'
           }
         ],
         pageNum: 1,
@@ -125,19 +126,17 @@ export default {
     },
 
     getListData() {
-      const arr = this.options.columnDataInfo
-      const result = []
-
-      for (let i = 0; i < 10; i++) {
-        const obj = {}
-        for (const item of arr) {
-          obj[item.value] = Math.random() * 10
-        }
-        result.push(obj)
+      let params = {
+        cid: 90018,
+        pageNum: this.options.pageNum,
+        pageSize: this.options.pageSize
       }
 
-      this.options.data = result
-      this.options.total = 30
+      getQueryList(params).then(res => {
+        this.options.data = res.data.items
+        this.options.total = res.data.total
+      })
+
     }
   }
 }

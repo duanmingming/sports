@@ -47,7 +47,7 @@
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { addNormalClass, getNormalClass, editNormalClass, deleteNormalClass } from '@/api/commodity'
+import { addNormalClass, getNormalClass, editNormalClass, deleteNormalClass, checkClass } from '@/api/commodity'
 import parameters from '@/utils/parameter'
 
 export default {
@@ -167,14 +167,16 @@ export default {
                 { required: true, message: '请输入课程名称', trigger: 'blur'},
                 { min: 2, max: 100, message: '长度在 2 到 100 个字符', trigger: 'blur' }
                 ],
-            name:'F0003'
+            name:'F0003',
+            width: 12
           },
           {
             type: 'select',
             label: '运动类目',
             rules: [],
             name:'F0004',
-            options:parameters.PA0045
+            options:parameters.PA0045,
+            width: 12
           },
           {
             type: 'img',
@@ -185,13 +187,15 @@ export default {
             type: 'input',
             label: '课时数量',
             rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0009'
+            name: 'F0009',
+            width: 12
           },
           {
             type: 'input',
             label: '赠送课时',       
             rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0018'
+            name: 'F0018',
+            width:12
           },
           {
             type: 'input',
@@ -203,13 +207,15 @@ export default {
             type: 'input',
             label: '课程价格',
             rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0012'
+            name: 'F0012',
+            width:12
           },
           {
             type: 'input',
             label: '优惠价格',
             rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0013'
+            name: 'F0013',
+            width:12
           },
           {
             type: 'text',
@@ -229,6 +235,28 @@ export default {
     }
   },
 
+  created() {
+    let role = parseInt(localStorage.getItem('role'))
+    if(role === 1){
+      for(let item of this.dialogOptions.settings){
+        item.disabled = true
+      }
+
+      this.dialogOptions.check = true
+
+      this.statusOptions = parameters.PA0051
+
+      this.options.columnOpreationInfo = [
+        {
+          name: '审核',
+          style: ''
+        }
+      ]
+
+    }
+    
+  },
+
   mounted() {
     this.getListData()
   },
@@ -245,6 +273,7 @@ export default {
     },
 
     getListData() {
+      let role = parseInt(localStorage.getItem('role'))
       console.log( this.historyQuery.status, this.historyQuery.hasOwnProperty('status'), ' this.historyQuery this.historyQuery');
       const params = {
         cid: localStorage.getItem('cid'),
@@ -252,7 +281,7 @@ export default {
         pageSize: this.options.pageSize,
         name: this.historyQuery.hasOwnProperty('others') ? this.historyQuery.others : "",
         time:  this.historyQuery.hasOwnProperty('time') ? this.historyQuery.time : null,
-        status:  this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null,
+        status:  role === 1 ? 10 : (this.historyQuery.hasOwnProperty('status') ? this.historyQuery.status : null),
       }
 
       console.log(params, 'paramsparamsparamsparamsparams');
@@ -280,6 +309,10 @@ export default {
         this.options.pageNum = data.pageNum
       } else if (data.type === 'multipleSelect') {
         this.options.multipleSelect = data.data
+      } else if (data.type === '审核') {
+        this.dialogOptions.title = "审核课程"
+        this.dialogOptions.data = data.data
+        this.dialogOptions.show = !this.dialogOptions.show
       } else if (data.type === '编辑') {
         this.dialogOptions.title = "编辑课程"
         this.dialogOptions.data = data.data
@@ -323,6 +356,22 @@ export default {
       data.F0001 = localStorage.getItem('cid')
       if(this.dialogOptions.title === "添加课程"){
         addNormalClass(this.reverseChangeFormat(data)).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
+      }else if(this.dialogOptions.title === "审核课程"){
+        console.log(data, 'PPPPPP');
+        let params = {
+          cid: localStorage.getItem('cid'),
+          type: 140,
+          F0000: data.F0000,
+          F0094: data.checkStatus,
+          F0095: data.checkNote,
+          F0001: 1
+        }
+        checkClass(params).then(res => {
           callback({success:true})
           this.getListData()
         }).catch(err => {
