@@ -9,38 +9,52 @@
 <template>
   <div>
     <div class="content" style="marginTop:30px">
-      <el-form :inline="true" :model="formInline" label-width="70px">
-        <el-form-item label="班名">
-          <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+      <el-form ref="ruleForm" :inline="true" :rules="rules" :model="formInline" label-width="70px">
+        <el-form-item label="班编号" prop="F0002">
+          <el-input v-model="formInline.F0002" ></el-input>
         </el-form-item>
-        <el-form-item label="课程名称">
-          <el-select v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
+        <el-form-item label="班名称">
+          <el-input v-model="formInline.F0003" ></el-input>
         </el-form-item>
-        <el-form-item label="开始日期">
-          <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+        <el-form-item label="开始日期" prop="F0006">
+          <el-date-picker
+            v-model="formInline.F0006"
+            type="date"
+            placeholder="选择日期"
+            style="width:100%"
+            value-format="yyyy-MM-dd"
+          />
         </el-form-item>
-        <el-form-item label="结束日期">
-          <el-select v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
-          </el-select>
+        <el-form-item label="结束日期" prop="F0007">
+          <el-date-picker
+            v-model="formInline.F0007"
+            type="date"
+            placeholder="选择日期"
+            style="width:100%"
+            value-format="yyyy-MM-dd"
+          />
         </el-form-item>
         <el-form-item label="上课频次">
-          <el-input v-model="formInline.user" placeholder="审批人"></el-input>
+          <el-input v-model="formInline.F0015"></el-input>
         </el-form-item>
         <el-form-item style="width:100%" label="教练">
-          <el-select style="width:100%"  v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select style="width:100%"  v-model="formInline.F0004" multiple placeholder="请选择">
+            <el-option
+              v-for="item in coachOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="width:100%" label="学员">
-          <el-select style="width:100%"  v-model="formInline.region" placeholder="活动区域">
-            <el-option label="区域一" value="shanghai"></el-option>
-            <el-option label="区域二" value="beijing"></el-option>
+          <el-select style="width:100%"  v-model="formInline.F0005" multiple placeholder="请选择">
+            <el-option
+              v-for="item in studentOptions"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
           </el-select>
         </el-form-item>
 
@@ -62,8 +76,7 @@
             {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}
             </p>
             <template v-if="schedle[data.day]">
-              <span class="text">{{schedle[data.day].time[0]}}--{{schedle[data.day].time[1]}}</span>
-              <span class="text">未开始</span>
+              <span class="text" :style="{color: schedle[data.day].status == 3 ? 'red' : (schedle[data.day].status == 6 ? 'yellow' : 'green' )}">{{schedle[data.day].time[0]}}--{{schedle[data.day].time[1]}}</span>
             </template>
             
           </div>
@@ -96,9 +109,9 @@
         </el-form-item>
         <el-form-item label="状态">
           <el-radio-group v-model="formLabelAlign.status">
-            <el-radio :label="3">已结束</el-radio>
-            <el-radio :label="6">进行中</el-radio>
             <el-radio :label="9">未开始</el-radio>
+            <el-radio :label="6">进行中</el-radio>
+            <el-radio :label="3">已结束</el-radio>
           </el-radio-group>
         </el-form-item>
         <el-form-item label="备注">
@@ -114,6 +127,8 @@
 </template>
 
 <script>
+import { getStudentList,  getCoachList, createClass, editClass, addClassTimes, deleteClassTimes} from '@/api/class'
+
 export default {
   data() {
     return {
@@ -136,24 +151,83 @@ export default {
       key: 0,
 
       formInline: {
-        user: '',
-        region: ''
-      }
+        F0002: '',
+        F0003: '',
+        F0006: '',
+        F0007: '',
+        F0015: '',
+        F0004: '',
+        F0005: ''
+      },
+      studentOptions: [],
+      coachOptions: [],
+
+      rules: {
+        F0002: [
+            { required: true, message: '请输入班编号', trigger: 'blur' }
+          ],
+        F0006: [
+            {  required: true, message: '请选择日期', trigger: 'change' }
+          ],
+          F0007: [
+            {  required: true, message: '请选择时间', trigger: 'change' }
+          ],
+      },
+      classId: this.$route.query.F0002,
+
     }
   },
 
   watch: {
     value(newValue, oldValue) {
-      if(oldValue && (newValue.getMonth() === oldValue.getMonth())){
-        this.dialogVisible = true
-        let year = newValue.getFullYear(),
-            month = (newValue.getMonth() + 1) > 9 ? (newValue.getMonth() + 1) : ('0' + (newValue.getMonth() + 1)),
-            date = newValue.getDate() > 9 ?  newValue.getDate() : ('0' + newValue.getDate())
-        let now = year + '-' + month + '-' + date
-        this.now = now
+      if(this.classId){
+        if(oldValue && (newValue.getMonth() === oldValue.getMonth())){
+          this.dialogVisible = true
+          let year = newValue.getFullYear(),
+              month = (newValue.getMonth() + 1) > 9 ? (newValue.getMonth() + 1) : ('0' + (newValue.getMonth() + 1)),
+              date = newValue.getDate() > 9 ?  newValue.getDate() : ('0' + newValue.getDate())
+          let now = year + '-' + month + '-' + date
+          this.now = now
+        }
+      }else{
+         this.$message({
+          message: '请先保存课程信息',
+          type: 'error'
+        });
       }
-      
     }
+  },
+
+  created() {
+    let orgId = 1
+    //parseInt(this.$route.query.F0001)
+    getStudentList(orgId).then(res => {
+      let arr = res.data.items, studentOptions = []
+      for(let item of arr){
+        studentOptions.push({
+          value: item.F0000,
+          label: item.F0002
+        })
+      }
+      this.studentOptions = studentOptions
+    })
+
+    getCoachList(orgId).then(res =>{
+      let arr = res.data.items, coachOptions = []
+      for(let item of arr){
+        coachOptions.push({
+          value: item.F0000,
+          label: item.F0002
+        })
+      }
+      this.coachOptions= coachOptions
+    })
+
+    this.formInline = this.$route.query
+  },
+
+  mounted() {
+    console.log(this.$route.query, '//////');
   },
 
   methods: {
@@ -167,11 +241,22 @@ export default {
     handleSubmit() {
       let {time, note, status} = this.formLabelAlign
       if(time){
+        console.log(time, this.value, this.classId, this.now);
         this.schedle[this.now] = {
           time,
           note,
           status
         }
+
+        let params = {
+          cid: localStorage.getItem('cid'),
+          schid: this.classId,
+          F0004: this.now,
+          F0005: time[0],
+          F0006: time[1]
+        }
+
+        addClassTimes(params)
       }else{
         if(this.schedle.hasOwnProperty(this.now)){
           delete this.schedle[this.now]
@@ -183,13 +268,49 @@ export default {
     },
 
     onSubmit() {
-      console.log('submit!');
+      this.$refs['ruleForm'].validate((valid) => {
+          if (valid) {
+            let { F0002, F0003, F0004, F0005, F0006, F0007 } = this.formInline
+            let params = {
+              F0001: localStorage.getItem('cid'),
+              F0002,
+              F0003,
+              F0004,
+              F0005,
+              F0006,
+              F0007
+            }
+
+            if(this.$route.query.hasOwnProperty('F0000')){
+              editClass(params).then(res => {
+                 this.$message({
+                    message: '保存成功',
+                    type: 'success'
+                  });
+                  this.classId = this.formInline.F0002
+              })
+            }else{
+              createClass(params).then(res => {
+                this.$message({
+                    message: '保存成功',
+                    type: 'success'
+                  });
+                this.classId = this.formInline.F0002
+              })
+            }
+            
+          } else {
+            console.log('error submit!!');
+            return false;
+          }
+        });
+
+
+
+      
     },
 
     handleGoback() {
-      console.log('===========this.$routerthis.$routerthis.$router=========================');
-      console.log(this.$router);
-      console.log('====================================');
       this.$router.back(-1)
     }
   }

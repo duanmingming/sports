@@ -313,5 +313,12 @@ module.exports = {
     {
       label: '体适能 MULTISPORT',
       value: 170
-    }]
+    }],
+
+    'PA0051': [
+      {value: 10, label: '未付款'},
+      {value: 20, label: '已付款'},
+      {value: 30, label: '已排课'},
+      {value: 40, label: '已结课'},
+    ],
 }

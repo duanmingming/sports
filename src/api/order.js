@@ -8,6 +8,24 @@ export function getQueryList(params) {
   })
 }
 
+
+export function getQueryDetail(params) {
+  return request({
+    url: '/api/private/v1/salesorder/detail',
+    method: 'get',
+    params
+  })
+}
+
+export function getList(params) {
+  return request({
+    url: '/api/private/v1/salesorder',
+    method: 'get',
+    params
+  })
+}
+
+
 export function editNormalClass(data) {
   return request({
     url: '/api/private/v1/goodsnormal',

@@ -110,7 +110,7 @@
 
       </el-form>
 
-      <span slot="footer" class="dialog-footer">
+      <span v-if="footerFlag" slot="footer" class="dialog-footer">
         <el-button @click="handleClose">取 消</el-button>
         <el-button type="primary" :loading="loading" @click="handleSubmit">提 交</el-button>
       </span>
@@ -209,7 +209,9 @@ export default {
       initFrom: null,
       loading: false,
       imageUrl: null,
-      file: {}
+      file: {},
+      footerFlag: this.options.footer ? false : true
+
     }
   },
 
@@ -232,12 +234,9 @@ export default {
       } else {
         this.form = this.initFrom
       }
-    },
-
-    formData(val) {
-      console.log(val, 'OOOPPPPPPPPOLIHGFRGHH')
-      
     }
+
+
   },
 
   created() {

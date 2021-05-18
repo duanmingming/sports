@@ -28,7 +28,7 @@ const orderRouter = {
     },
     {
       path: 'query',
-      component: () => import('@/views/order/management'),
+      component: () => import('@/views/order/query'),
       name: 'Class',
       meta: { title: '订单查询', noCache: true }
     },

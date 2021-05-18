@@ -55,13 +55,13 @@
 
 <script>
 import Table from '@/components/Table/index'
-import { getQueryList, getQueryDetail } from '@/api/order'
+import { getList, getQueryDetail } from '@/api/order'
 import Dialog from '@/components/Dialog/index'
 import parameters from '@/utils/parameter'
 
 
 export default {
-  name: 'Management',
+  name: 'Orderquery',
   components: { Table, Dialog },
   data() {
     return {
@@ -77,32 +77,20 @@ export default {
             width: '15%'
           },
           {
-            name: '用户',
+            name: '用户账号',
             value: 'F0003',
             width: '15%'
           }, {
-            name: '手机号',
-            value: 'F0028',
+            name: '客户类型',
+            value: 'F0005',
             width: '10%'
           }, {
-            name: '会员姓名',
-            value: 'F0022',
-            width: '30%'
-          }, {
-            name: '商品名称',
-            value: 'F0011',
+            name: '订单日期',
+            value: 'F0006',
             width: '10%'
-          }, {
+          },{
             name: '订单金额',
-            value: 'F0014',
-            width: '10%'
-          }, {
-            name: '订单状态',
-            value: 'F0007',
-            width: '10%'
-          }, {
-            name: '提交时间',
-            value: 'F0032',
+            value: 'F0008',
             width: '10%'
           }
         ],
@@ -244,7 +232,7 @@ export default {
         name: this.historyFormInline.others
       }
 
-      getQueryList(params).then(res => {
+      getList(params).then(res => {
         this.options.data = res.data.items
         this.options.total = res.data.total
       })
