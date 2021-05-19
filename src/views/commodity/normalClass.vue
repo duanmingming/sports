@@ -154,7 +154,7 @@ export default {
 
       dialogOptions: {
         title: "添加课程",
-        check: true,
+        check: false,
         labelWidth: "130px",
         labelPosition: "left",
         show:false,
@@ -453,11 +453,6 @@ export default {
     height: 160px;
     border: 1px dashed #d9d9d9;
     overflow: scroll;
-  }
-
-  .textForm {
-    width: 130px;
-    display: inline-block;
   }
 
 </style>

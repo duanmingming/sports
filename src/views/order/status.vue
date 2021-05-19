@@ -45,19 +45,19 @@
       <Table :options="options"  @handleTable="handleTable" />
     </el-card>
 
-    <Dialog :options="dialogOptions" />
+    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
   </div>
 </template>
 
 <script>
 import Table from '@/components/Table/index'
-import { getOrder, getQueryDetail } from '@/api/order'
+import { getOrder, getQueryDetail, changeStatus } from '@/api/order'
 import Dialog from '@/components/Dialog/index'
 import parameters from '@/utils/parameter'
 
 
 export default {
-  name: 'Orderquery',
+  name: 'Orderstatus',
   components: { Table, Dialog },
   data() {
     return {
@@ -94,6 +94,10 @@ export default {
           {
             name: '查看',
             style: ''
+          },
+          {
+            name: '状态',
+            style: 'color:red'
           }
         ],
         pageNum: 1,
@@ -253,10 +257,39 @@ export default {
         }
         getQueryDetail(poarams).then(res => {
           this.dialogOptions.data = res.data.items[0]
+          this.dialogOptions.settings[11].disabled = true
+          this.dialogOptions.footer = true
+          this.dialogOptions.show = !this.dialogOptions.show
+        })
+        
+      } else if (data.type === '状态') {
+        let poarams = {
+          cid: localStorage.getItem('cid'),
+          sid: data.data.F0000
+        }
+        getQueryDetail(poarams).then(res => {
+          this.dialogOptions.data = res.data.items[0]
+          this.dialogOptions.settings[11].disabled = false
+          this.dialogOptions.footer = false
           this.dialogOptions.show = !this.dialogOptions.show
         })
         
       } 
+    },
+
+    handleSubmit(data, callback) {
+      console.log(data, 'YYYYYYYYY');
+      let params = {
+          cid: localStorage.getItem('cid'),
+          sid: data.F0000,
+          status: data.F0094
+      }
+      changeStatus(params).then(res => {
+          callback({success:true})
+          this.getListData()
+        }).catch(err => {
+          callback({success:false})
+        })
     },
 
 

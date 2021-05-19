@@ -34,7 +34,7 @@ const orderRouter = {
     },
     {
       path: 'status',
-      component: () => import('@/views/order/management'),
+      component: () => import('@/views/order/status'),
       name: 'Class',
       meta: { title: '订单状态管理', noCache: true }
     }

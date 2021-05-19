@@ -16,11 +16,7 @@
       <el-form :inline="true" :model="formInline">
         <el-form-item label="订单状态">
           <el-select v-model="formInline.status" placeholder="订单状态">
-            <el-option label="未付款" value="shanghai" />
-            <el-option label="已付款" value="beijing" />
-            <el-option label="已排课" value="shanghai1" />
-            <el-option label="已结课" value="shanghai2" />
-            <el-option label="已转课" value="shanghai3" />
+            <el-option v-for="(value, key) in statusOptions" :key="key" :label="value" :value="key" />
           </el-select>
         </el-form-item>
         <el-form-item label="提交时间">
@@ -55,7 +51,7 @@
 
 <script>
 import Table from '@/components/Table/index'
-import { getQueryList, getQueryDetail } from '@/api/order'
+import { getList as getQueryList, getQueryDetail } from '@/api/order'
 import Dialog from '@/components/Dialog/index'
 import parameters from '@/utils/parameter'
 
@@ -204,7 +200,7 @@ export default {
             disabled: true,
             name: 'F0014',
           },
-                    {
+          {
             type: 'date',
             label: '购买日期',
             disabled: true,
@@ -221,11 +217,13 @@ export default {
         ]
       },
 
+      statusOptions: parameters.PA0011
+
     }
   },
 
   mounted() {
-    this.getListData()
+   this.getListData()
   },
 
   methods: {
@@ -266,7 +264,7 @@ export default {
           sid: data.data.F0000
         }
         getQueryDetail(poarams).then(res => {
-          //this.dialogOptions.data = res.data.items
+          this.dialogOptions.data = res.data.items[0]
           this.dialogOptions.show = !this.dialogOptions.show
         })
         

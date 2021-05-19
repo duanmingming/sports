@@ -444,7 +444,8 @@ export default {
       const { token } = res.data
       localStorage.setItem('token', token)
       getUserInfo().then(res => {
-        const { F0001: cid } = res.data
+        //const { F0001: cid } = res.data
+        let cid = 90018
         this.cid = cid
         localStorage.setItem('cid', cid)
       })

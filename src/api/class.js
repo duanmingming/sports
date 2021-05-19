@@ -54,6 +54,18 @@ export function getStudentList(query) {
       params: query
     })
   }
+
+  export function getClassTimesDetail(query) {
+    return request({
+      url: '/api/private/v1/classtimes/list',
+      method: 'get',
+      params: query
+    })
+  }
+
+
+
+
   
 
 

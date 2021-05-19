@@ -71,12 +71,12 @@
           slot="dateCell"
           slot-scope="{date, data}"
         >
-          <div @click="handleClick(date, data)">
+          <div>
             <p :class="data.isSelected ? 'is-selected' : ''" style="fontSize:14px">
             {{ data.day.split('-').slice(1).join('-') }} {{ data.isSelected ? '✔️' : ''}}
             </p>
-            <template v-if="schedle[data.day]">
-              <span class="text" :style="{color: schedle[data.day].status == 3 ? 'red' : (schedle[data.day].status == 6 ? 'yellow' : 'green' )}">{{schedle[data.day].time[0]}}--{{schedle[data.day].time[1]}}</span>
+            <template v-if="data.day in schedle ? schedle[data.day] : false">
+              <span class="text" :style="{color: schedle[data.day].status == 0 ? 'red' : (schedle[data.day].status == 6 ? 'yellow' : 'green' )}">{{schedle[data.day].start}}--{{schedle[data.day].end}}</span>
             </template>
             
           </div>
@@ -127,7 +127,7 @@
 </template>
 
 <script>
-import { getStudentList,  getCoachList, createClass, editClass, addClassTimes, deleteClassTimes} from '@/api/class'
+import { getStudentList,  getCoachList, createClass, editClass, addClassTimes, deleteClassTimes, getClassTimesDetail} from '@/api/class'
 
 export default {
   data() {
@@ -173,7 +173,7 @@ export default {
             {  required: true, message: '请选择时间', trigger: 'change' }
           ],
       },
-      classId: this.$route.query.F0002,
+      classId: this.$route.query.F0000,
 
     }
   },
@@ -224,6 +224,29 @@ export default {
     })
 
     this.formInline = this.$route.query
+
+    if(this.$route.query.hasOwnProperty('F0000')){
+      let params = {
+        cid: localStorage.getItem('cid'),
+        schid: this.$route.query.F0000
+      }
+      getClassTimesDetail(params).then(res =>{
+        let obj = {}
+        for(let item of res.data.items){
+          let key = (item.F0004).slice(0,10)
+          let start = item.F0005
+          let end = item.F0006
+          let status = item.F0094
+          obj[key] = {
+            start,
+            end,
+            status
+          }
+        }
+        console.log(obj, '???????/');
+       this.schedle = obj
+      })
+    }
   },
 
   mounted() {
@@ -287,7 +310,7 @@ export default {
                     message: '保存成功',
                     type: 'success'
                   });
-                  this.classId = this.formInline.F0002
+                  this.classId = this.formInline.F0000
               })
             }else{
               createClass(params).then(res => {
@@ -295,7 +318,7 @@ export default {
                     message: '保存成功',
                     type: 'success'
                   });
-                this.classId = this.formInline.F0002
+                this.classId = this.formInline.F0000
               })
             }
             

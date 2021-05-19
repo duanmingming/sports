@@ -58,7 +58,7 @@
                 <el-date-picker
                   v-model="form[item.name]"
                   type="date"
-                  :disabled-date="item.disabled ? item.disabled : false"
+                  :disabled="item.disabled ? item.disabled : false"
                   placeholder="选择日期"
                   style="width:100%"
                   value-format="yyyy-MM-dd"
@@ -67,7 +67,7 @@
 
               <template v-else-if="item.type === 'radio'">
                 <el-radio-group v-model="form[item.name]">
-                  <el-radio v-for="radioOption in item.options" :key="radioOption.value" :label="radioOption.value">{{ radioOption.label }}</el-radio>
+                  <el-radio v-for="radioOption in item.options" :key="radioOption.value" :disabled="item.disabled ? item.disabled : false" :label="radioOption.value">{{ radioOption.label }}</el-radio>
                 </el-radio-group>
               </template>
 
@@ -209,8 +209,7 @@ export default {
       initFrom: null,
       loading: false,
       imageUrl: null,
-      file: {},
-      footerFlag: this.options.footer ? false : true
+      file: {}
 
     }
   },
@@ -222,6 +221,10 @@ export default {
 
     formData() {
       return this.options.data
+    },
+
+    footerFlag() {
+      return this.options.footer ? false : true
     }
   },
 
@@ -234,7 +237,9 @@ export default {
       } else {
         this.form = this.initFrom
       }
-    }
+    },
+
+
 
 
   },

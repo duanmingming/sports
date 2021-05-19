@@ -1,13 +1,5 @@
 import request from '@/utils/request'
 
-export function getQueryList(params) {
-  return request({
-    url: '/api/private/v1/salesorder',
-    method: 'get',
-    params
-  })
-}
-
 
 export function getQueryDetail(params) {
   return request({
@@ -25,18 +17,18 @@ export function getList(params) {
   })
 }
 
-
-export function editNormalClass(data) {
+export function getOrder(params) {
   return request({
-    url: '/api/private/v1/goodsnormal',
-    method: 'put',
-    data
+    url: '/api/private/v1/salesorder/header',
+    method: 'get',
+    params
   })
 }
 
-export function deleteNormalClass(id) {
+export function changeStatus(data) {
   return request({
-    url: '/api/private/v1/goodsnormal/' + id,
-    method: 'delete'
+    url: '/api/private/v1/salesorder/status',
+    method: 'put',
+    data
   })
 }

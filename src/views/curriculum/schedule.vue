@@ -192,7 +192,6 @@ export default {
       }
       getScheduleList(params).then(res => {
         for(let item of res.data.items){
-          console.log(item);
           item.F0004 = JSON.parse(item.F0004)
           item.F0005 = JSON.parse(item.F0005)
           item.F0004s = this.changeStrArr(item.F0004s)
