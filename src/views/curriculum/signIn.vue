@@ -28,7 +28,6 @@
     <el-card class="boxHeader">
       <div slot="header" class="clearfix">
         <span>课程列表</span>
-        <el-button style="float: right;marginRight:10px;" type="primary" @click="handleAdd">添加课程</el-button>
       </div>
       <Table :options="options" @handleTable="handleTable" />
     </el-card>
@@ -117,7 +116,7 @@ export default {
         ],
         columnOpreationInfo: [
           {
-            name: '排课',
+            name: '签到',
             style: ''
           }
         ],
@@ -226,7 +225,7 @@ export default {
         this.options.pageNum = data.pageNum
       } else if (data.type === 'multipleSelect') {
         this.options.multipleSelect = data.data
-      } else if (data.type === '排课') {
+      } else if (data.type === '签到') {
         this.$router.push({path:'/curriculum/sign', query: data.data})
       } 
     },

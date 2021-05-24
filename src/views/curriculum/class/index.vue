@@ -92,7 +92,7 @@
       width="666px"
       :before-close="handleClose">
 
-      <el-form label-width="80px" :model="formLabelAlign">
+      <el-form ref="classTimes" label-width="80px" :model="formLabelAlign">
         <el-form-item label="时间">
           <el-time-picker
             is-range
@@ -266,8 +266,8 @@ export default {
       if(time){
         console.log(time, this.value, this.classId, this.now);
         this.schedle[this.now] = {
-          time,
-          note,
+          start: time[0],
+          end: time[1],
           status
         }
 
@@ -279,7 +279,9 @@ export default {
           F0006: time[1]
         }
 
-        addClassTimes(params)
+        addClassTimes(params).then(res => {
+          this.$refs["classTimes"].resetFields();
+        })
       }else{
         if(this.schedle.hasOwnProperty(this.now)){
           delete this.schedle[this.now]

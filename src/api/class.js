@@ -63,6 +63,38 @@ export function getStudentList(query) {
     })
   }
 
+  export function getSignClassTimes(query) {
+    return request({
+      url: '/api/private/v1/classtimes/sign',
+      method: 'get',
+      params: query
+    })
+  }
+
+  export function signClassTimes(data) {
+    return request({
+      url: '/api/private/v1/classtimes/sign',
+      method: 'put',
+      data
+    })
+  }
+
+  export function getClassStudent(query) {
+    return request({
+      url: '/api/private/v1/schedule/member',
+      method: 'get',
+      params: query
+    })
+  }
+
+  export function getClassCoach(query) {
+    return request({
+      url: '/api/private/v1/schedule/coach',
+      method: 'get',
+      params: query
+    })
+  }
+
 
 
 
