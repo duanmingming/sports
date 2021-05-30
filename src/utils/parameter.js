@@ -324,4 +324,14 @@ module.exports = {
       {value: 30, label: '已排课'},
       {value: 40, label: '已结课'},
     ],
+
+    'PA0053':[
+      {label:'电话',value:'电话'},
+      {label:'微信',value:'微信'},
+      {label:'抖音',value:'抖音'},
+      {label:'邮件',value:'邮件'},
+      {label:'短信',value:'短信'},
+      {label:'面谈',value:'面谈'},
+      {label:'其他',value:'其他'},
+    ]
 }

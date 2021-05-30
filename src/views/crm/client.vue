@@ -39,18 +39,62 @@
       </div>
       <Table :options="options" @handleTable="handleTable" />
     </el-card>
-    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit" />
+    <Dialog :options="dialogOptions" @handleSubmit="handleSubmit">
+      <el-form-item  label="采集方式">
+          <el-radio-group v-model="form.F0032">
+            <el-radio v-for="radioOption in radioOPtions" :key="radioOption.value"  :label="radioOption.value">{{ radioOption.label }}</el-radio>
+          </el-radio-group>
+      </el-form-item>
+      <template v-if="form.F0032 === '线下'">
+        <el-form-item  label="采集人">
+            <el-input v-model="form.F0033" />
+        </el-form-item>
+        <el-form-item  label="采集地点">
+            <el-input v-model="form.F0035" />
+        </el-form-item>
+        <el-form-item  label="采集时间">
+            <el-date-picker
+              v-model="form.F0034"
+              type="date"
+              placeholder="选择日期"
+              style="width:100%"
+              value-format="yyyy-MM-dd"
+            />
+        </el-form-item>
+        <el-form-item  label="来源">
+            <el-radio-group v-model="form.F0036">
+              <el-radio v-for="radioOption in source" :key="radioOption.value"  :label="radioOption.value">{{ radioOption.label }}</el-radio>
+            </el-radio-group>
+        </el-form-item>
+      </template>
+      <template v-else>
+        <el-form-item  label="推送时间">
+            <el-date-picker
+              v-model="form.F0034"
+              type="date"
+              placeholder="选择日期"
+              style="width:100%"
+              value-format="yyyy-MM-dd"
+            />
+        </el-form-item>
+        <el-form-item  label="来源">
+            <el-radio-group v-model="form.F0036">
+              <el-radio v-for="radioOption in source1" :key="radioOption.value"  :label="radioOption.value">{{ radioOption.label }}</el-radio>
+            </el-radio-group>
+        </el-form-item>
+      </template>
+    </Dialog>
   </div>
 </template>
 
 <script>
 import Table from '@/components/Table/index'
 import Dialog from '@/components/Dialog/index'
-import { getCustomerList as getList,  } from '@/api/crm'
+import { getCustomerList as getList, addCustomer as add, editCustomer as edit, deleteCustomer as deleteData } from '@/api/crm'
 import parameters from '@/utils/parameter'
 
 export default {
-  name: 'Match',
+  name: 'Client',
   components: { Table, Dialog },
   data() {
     const checkTel = (rule, value, callback) => {
@@ -164,11 +208,10 @@ export default {
             name:'F0003'
           },
           {
-            type: 'input',
-            label: '年龄',
+            type: 'date',
+            label: '出生日期',
             width: 8,
-            rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0005'
+            name: 'F0007'
           },
           {
               type: 'radio',
@@ -176,56 +219,46 @@ export default {
               width: 8,
               name: 'F0006',
               options: [{
-                value:0,
+                value:'男',
                 label:'男'
               },{
-                value: 1,
+                value: '女',
                 label: '女'
               }]
           },
           {
             type: 'img',
-            label:'上传图片',
-            name:'F0012'
+            label:'图片',
+            name:'F0021'
           },
           
-          {
-              type: 'radio',
+          { 
+              type: 'select',
               label: '意向项目',
-              name: 'F0006',
-              options: [{
-                value:0,
-                label:'球队'
-              },{
-                value: 1,
-                label: '个人'
-              }]
-          },{
-            type: 'input',
-            label: '证件类型',
-            width: 12,
-            name: 'F0021'
+              name: 'F0012',
+              options: parameters.PA0045
           },
           {
             type: 'input',
             label: '国籍',
             width: 12,
-            name: 'F0015'
+            name: 'F0010'
           },
           {
             type: 'input',
             label: '证件号码',
-            name: 'F0016'
+            width: 12,
+            name: 'F0011'
           },
           {
             type: 'input',
             label: '意向校区',
-            name: 'F0016'
+            name: 'F0013'
           },
           {
             type: 'input',
             label: '家庭住址',
-            name: 'F0016'
+            name: 'F0015'
           },
           {
             type: 'input',
@@ -235,107 +268,99 @@ export default {
           {
             type: 'input',
             label: '家长姓名',
-            name: 'F0016'
-          },
-          {
-            type: 'input',
-            label: '与家长关系',
-            name: 'F0016'
-          },
-          {
-            type: 'input',
-            label: '家长联系电话',
-            name: 'F0016'
-          },
-          {
-            type: 'input',
-            label: '微信号',
-            name: 'F0016'
-          },
-          {
-            type: 'input',
-            label: '国籍',
-            name: 'F0016'
-          },
-          {
-            type: 'input',
-            label: '状态',
-            name: 'F0016'
-          },
-
-
-
-
-
-
-          {
-            type: 'date',
-            label: '举办时间',
             width: 12,
-            name: 'F0013'
-          },
-          {
-            type: 'input',
-            label: '地点',
-            width: 12,
-            name: 'F0007'
-          },
-          {
-            type: 'text',
-            label: '赛事简介',
-            name: 'F0011',
-            roew:3
-          },
-          {
-            type: 'input',
-            label: '保证金',
-            width: 8,
-            rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0008'
-          },
-          {
-            type: 'input',
-            label: '报名费',
-            width: 8,
-            rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0009'
-          },
-          {
-            type: 'input',
-            label: '保险',
-            width: 8,
-            rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0010'
-          },
-          {
-            type: 'input',
-            label: '联系人',
-            width: 8,
             name: 'F0017'
           },
           {
             type: 'input',
-            label: '联系电话',
-            width: 8,
-            rules: [{ validator: checkTel, trigger: 'blur' }],
+            label: '与家长关系',
+            width: 12,
+            name: 'F0019'
+          },
+          {
+            type: 'input',
+            label: '家长联系电话',
+            width: 12,
             name: 'F0018'
           },
           {
             type: 'input',
             label: '微信号',
-            width: 8,
-            name: 'F0019'
+            width: 12,
+            name: 'F0026'
           },
           {
             type: 'input',
-            label: '上架有效期',
-            rules: [{ validator: checkNum, trigger: 'blur' }],
-            name: 'F0020'
-          },
+            label: '校区状态',
+            width: 12,
+            name: 'F0040'
+          }
         ]
       },
 
-      statusOptions: parameters.PA0030
+      statusOptions: parameters.PA0030,
+
+      form:{
+        F0032: '',
+        F0033: '',
+        F0034:'',
+        F0035:'',
+        F0036:''
+      },
+
+      radioOPtions: [
+        {
+          value:'线上',
+          label:'线上'
+        },
+        {
+          value:'线下',
+          label:'线下'
+        }
+      ],
+
+      source: [
+        {
+          value:'活动',
+          label:'活动'
+        },
+        {
+          value:'转介绍',
+          label:'转介绍'
+        },
+        {
+          value:'地推',
+          label:'地推'
+        },
+        {
+          value:'赛事',
+          label:'赛事'
+        },
+        {
+          value:'线下其他',
+          label:'线下其他'
+        }
+      ],
+
+      source1: [
+        {
+          value:'大众点评',
+          label:'大众点评'
+        },
+        {
+          value:'抖音',
+          label:'抖音'
+        },
+        {
+          value:'快手',
+          label:'快手'
+        },
+        {
+          value:'其他',
+          label:'其他'
+        }
+      ]
+
     }
   },
 
@@ -377,7 +402,14 @@ export default {
 
     handleAdd() {
       this.dialogOptions.data = null
-      this.dialogOptions.title = "添加课程"
+      this.dialogOptions.title = "添加客户信息"
+      this.form = {
+        F0032: '',
+        F0033: '',
+        F0034:'',
+        F0035:'',
+        F0036:''
+      }
       this.dialogOptions.show = !this.dialogOptions.show
         
     },
@@ -391,21 +423,21 @@ export default {
         this.options.pageNum = data.pageNum
       } else if (data.type === 'multipleSelect') {
         this.options.multipleSelect = data.data
-      } else if (data.type === '审核') {
-        this.dialogOptions.title = "审核课程"
+      } else if (data.type === '编辑') {
+        this.dialogOptions.title = "编辑客户信息"
         this.dialogOptions.data = data.data
-        this.dialogOptions.show = !this.dialogOptions.show
-      }else if (data.type === '编辑') {
-        this.dialogOptions.title = "编辑课程"
-        this.dialogOptions.data = data.data
+        let { F0032, F0033, F0034, F0035, F0036} = data.data
+        this.form = {
+           F0032, F0033, F0034, F0035, F0036
+        }
         this.dialogOptions.show = !this.dialogOptions.show
       } else if (data.type === '删除') {
-        this.$confirm('此操作将永久删除该课程, 是否继续?', '提示', {
+        this.$confirm('此操作将永久删除该客户信息, 是否继续?', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-           deleteClass(data.data.F0000).then(res => {
+           deleteData(data.data.F0000).then(res => {
              this.getListData()
              this.$message({
               type: 'success',
@@ -420,54 +452,29 @@ export default {
           });          
         });
        
-      } else if (data.type === '上/下架') {
-        if(data.data.F0094 === '已上架'){
-          data.data.F0094 = '下架'
-        }else{
-          data.data.F0094 = '上架审核中'
-        }
-
-        editClass(this.reverseChangeFormat(data.data)).then(res => {
-          this.getListData()
-        })
-      } 
+      }
     },
 
     handleSubmit(data, callback) {
       data.F0001 = localStorage.getItem('cid')
-      if(this.dialogOptions.title === "添加课程"){
-        addClass(this.reverseChangeFormat(data)).then(res => {
+      if(this.dialogOptions.title === "添加客户信息"){
+        let params = Object.assign({}, data, this.form)
+        add(params).then(res => {
           callback({success:true})
           this.getListData()
         }).catch(err => {
           callback({success:false})
         })
-      }else if(this.dialogOptions.title === "审核课程"){
-        console.log(data, 'PPPPPP');
-        let params = {
-          cid: localStorage.getItem('cid'),
-          type: 140,
-          F0000: data.F0000,
-          F0094: data.checkStatus,
-          F0095: data.checkNote,
-          F0001: 1
-        }
-        checkClass(params).then(res => {
+      }else if(this.dialogOptions.title === "编辑客户信息"){
+        let params = Object.assign({}, data, this.form)
+        edit(params).then(res => {
           callback({success:true})
           this.getListData()
         }).catch(err => {
           callback({success:false})
-        })
-      }else{
-        editClass(this.reverseChangeFormat(data)).then(res => {
-          callback({success:true})
-          this.dialogOptions.title = "添加课程"
-          this.getListData()
-        }).catch(err => {
-          callback({success:false})
-          this.dialogOptions.title = "添加课程"
         })
       }
+        
     },
 
     handleMultipleDelete() {

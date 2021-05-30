@@ -65,6 +65,17 @@
                 />
               </template>
 
+              <template v-else-if="item.type === 'dateTime'">
+                <el-date-picker
+                  v-model="form[item.name]"
+                  type="datetime"
+                  :disabled="item.disabled ? item.disabled : false"
+                  placeholder="选择日期时间"
+                  style="width:100%"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                />
+              </template>
+
               <template v-else-if="item.type === 'radio'">
                 <el-radio-group v-model="form[item.name]">
                   <el-radio v-for="radioOption in item.options" :key="radioOption.value" :disabled="item.disabled ? item.disabled : false" :label="radioOption.value">{{ radioOption.label }}</el-radio>
@@ -106,6 +117,8 @@
         </template>
 
       </el-row>
+
+      <slot></slot>
 
 
       </el-form>
